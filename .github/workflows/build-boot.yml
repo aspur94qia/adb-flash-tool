@@ -1,0 +1,69 @@
+name: build-boot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bebaskan ruang disk
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
+          df -h /
+
+      - name: Siapkan branch droidian
+        run: git checkout -B droidian
+
+      - name: Tulis skrip build
+        run: |
+          mkdir -p "$RUNNER_TEMP/pkg" "$GITHUB_WORKSPACE/../out"
+          cat > "$RUNNER_TEMP/inner.sh" <<'EOF'
+          set -eux
+          apt-get update
+          apt-get install -y linux-packaging-snippets
+          cd /buildd/sources
+
+          if [ ! -f droidian/kernel-info.mk ]; then
+            echo "=== droidian/kernel-info.mk belum ada. Contoh bawaan: ==="
+            cat /usr/share/linux-packaging-snippets/kernel-info.mk.example
+            exit 1
+          fi
+
+          mkdir -p debian/source
+          cp droidian/kernel-info.mk debian/kernel-info.mk
+          echo 13 > debian/compat
+          echo "3.0 (native)" > debian/source/format
+          echo "include /usr/share/linux-packaging-snippets/kernel-snippet.mk" > debian/rules
+          chmod +x debian/rules
+
+          RELENG_HOST_ARCH="arm64" releng-build-package
+
+          mkdir -p /out
+          cp -v /buildd/*.deb /out/ || true
+          for d in /buildd/linux-bootimage-*.deb; do
+            dpkg-deb -x "$d" /tmp/bootimg
+          done
+          find /tmp/bootimg -name 'boot.img' -exec cp -v {} /out/boot.img \;
+          EOF
+
+      - name: Build di container Droidian
+        run: |
+          docker run --rm \
+            -v "$RUNNER_TEMP/pkg":/buildd \
+            -v "$GITHUB_WORKSPACE":/buildd/sources \
+            -v "$GITHUB_WORKSPACE/../out":/out \
+            -v "$RUNNER_TEMP/inner.sh":/inner.sh \
+            quay.io/droidian/build-essential:trixie-amd64 \
+            bash /inner.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: boot-img
+          path: ${{ github.workspace }}/../out/*
+          if-no-files-found: error
