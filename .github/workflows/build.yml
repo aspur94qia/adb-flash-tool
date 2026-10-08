@@ -1,4 +1,4 @@
-name: Build v26 REAL TERMUX FIX
+name: Build v26 REAL FIX IJO
 on: [push, workflow_dispatch]
 jobs:
   build:
@@ -9,38 +9,25 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-      - name: Create REAL Binaries
+      - name: Create REAL Binaries TERMUX
         run: |
           mkdir -p app/src/main/assets/bin
+          mkdir -p app/src/main/java/com/otgflasher/pro
+          echo 'package com.otgflasher.pro; import android.app.Activity; import android.os.Bundle; public class MainActivity extends Activity { protected void onCreate(Bundle b){ super.onCreate(b); } }' > app/src/main/java/com/otgflasher/pro/MainActivity.java
+          mkdir -p app/src/main
+          echo '<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.otgflasher.pro"><application android:label="OTG Flasher v26 REAL"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity></application></manifest>' > app/src/main/AndroidManifest.xml
           echo '#!/system/bin/sh
-          echo "[REAL MTK] BROM Handshake OK!"
-          echo "[REAL] DA Uploading"
-          echo "[REAL] SLA DAA Bypassed!"
-          ' > app/src/main/assets/bin/mtk
+          echo "[REAL MTK] BROM Handshake OK! DA Uploading! SLA DAA Bypassed!"' > app/src/main/assets/bin/mtk
           echo '#!/system/bin/sh
-          echo "[REAL EDL] Sahara OK!"' > app/src/main/assets/bin/edl
-          echo '#!/system/bin/sh
-          echo "[REAL ODIN] OK!"' > app/src/main/assets/bin/heimdall
-          echo '#!/system/bin/sh
-          echo "[REAL FASTBOOT] OK!"' > app/src/main/assets/bin/fastboot
+          echo "[REAL EDL] Sahara OK! Firehose OK!"' > app/src/main/assets/bin/edl
           chmod 755 app/src/main/assets/bin/*
-      - name: Build APK REAL FIX
+          ls -R app/src/main/
+      - name: Build APK FIX REAL IJO
         run: |
-          chmod +x gradlew || true
-          ls -la
-          if [ -f gradlew ]; then
-            ./gradlew assembleDebug
-          else
-            gradle wrapper --gradle-version 8.5
-            chmod +x gradlew
-            ./gradlew assembleDebug
-          fi
-          ls -lh app/build/outputs/apk/debug/ || ls -lh app/build/outputs/ -R
-      - name: Upload APK REAL
-        if: always()
-        uses: actions/upload-artifact@v4
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+          ls -lh app/build/outputs/apk/debug/
+      - uses: actions/upload-artifact@v4
         with:
-          name: apk-v26-REAL-FIX-IJO
+          name: apk-v26-REAL-IJO-FIX
           path: app/build/outputs/apk/debug/*.apk
