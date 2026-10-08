@@ -55,9 +55,11 @@ jobs:
           cat > app/src/main/AndroidManifest.xml << 'MAN'
           <manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-feature android:name="android.hardware.usb.host"/><application android:icon="@mipmap/ic_launcher" android:label="OTG Flasher Pro" android:theme="@style/Theme.OTG"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity></application></manifest>
           MAN
+          pip install pillow -q
           python3 << 'PY'
           from PIL import Image, ImageDraw
-          def mk(sz,f): img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4); img.save(f"app/src/main/res/{f}/ic_launcher.png")
+          def mk(sz,f): 
+           img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4); img.save(f"app/src/main/res/{f}/ic_launcher.png")
           [mk(s,f) for s,f in [(192,"mipmap-xxxhdpi"),(144,"mipmap-xxhdpi"),(96,"mipmap-xhdpi"),(72,"mipmap-hdpi"),(48,"mipmap-mdpi")]]
           open("app/src/main/res/drawable/bg_card_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1A33"/></shape>')
           PY
@@ -71,7 +73,7 @@ jobs:
               protected void onCreate(Bundle b) {
                   super.onCreate(b);
                   TextView tv = new TextView(this);
-                  tv.setText("OTG Flasher Pro v1.7\nBUILD FIXED!\n8 TOOLS READY");
+                  tv.setText("OTG Flasher Pro v1.7\nBUILD SUCCESS!");
                   tv.setTextColor(0xFF00D4FF);
                   tv.setPadding(50,150,50,50);
                   tv.setTextSize(20);
