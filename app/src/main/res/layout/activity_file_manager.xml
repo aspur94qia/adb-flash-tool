@@ -11,12 +11,7 @@
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
 <Button android:id="@+id/btnExtract" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="EXTRACT" android:textSize="11sp" android:backgroundTint="#4CAF50"/>
 <Button android:id="@+id/btnCreateZip" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="CREATE ZIP" android:textSize="10sp" android:backgroundTint="#FF9800" android:layout_marginStart="4dp"/>
-<Button android:id="@+id/btnCreateTar" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="TAR.GZ" android:textSize="10sp" android:layout_marginStart="4dp"/>
-</LinearLayout>
-<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
-<Button android:id="@+id/btnDelete" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="DELETE" android:textSize="11sp" android:backgroundTint="#D32F2F"/>
-<Button android:id="@+id/btnRename" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="RENAME" android:textSize="10sp" android:layout_marginStart="4dp"/>
-<Button android:id="@+id/btnFlashHere" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="FLASH THIS" android:textSize="11sp" android:backgroundTint="#D32F2F" android:layout_marginStart="4dp"/>
+<Button android:id="@+id/btnDelete" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="DELETE" android:textSize="11sp" android:backgroundTint="#D32F2F" android:layout_marginStart="4dp"/>
 </LinearLayout>
 </LinearLayout>
 </LinearLayout>
