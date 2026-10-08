@@ -26,7 +26,7 @@ jobs:
           cat > "$RUNNER_TEMP/inner.sh" <<'EOF'
           set -eux
           apt-get -o Acquire::AllowInsecureRepositories=true -o Acquire::AllowDowngradeToInsecureRepositories=true update
-          apt-get install -y --allow-unauthenticated linux-packaging-snippets
+          for i in 1 2 3 4 5; do apt-get -o Acquire::AllowInsecureRepositories=true update; apt-get install -y --allow-unauthenticated linux-packaging-snippets && break; sleep 30; done; apt-cache policy linux-packaging-snippets; dpkg -s linux-packaging-snippets >/dev/null
           cd /buildd/sources
 
           if [ ! -f droidian/kernel-info.mk ]; then
