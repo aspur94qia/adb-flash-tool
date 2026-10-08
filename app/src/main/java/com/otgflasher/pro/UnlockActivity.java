@@ -1,21 +1,19 @@
-
 package com.otgflasher.pro;
 import android.app.Activity;import android.os.Bundle;import android.widget.*;import java.io.*;
-public class UnlockActivity extends Activity {
-    TextView txtFile, txtDetail, log; ProgressBar bar; String file="/sdcard/Download/";
-    @Override protected void onCreate(Bundle b){ super.onCreate(b); setContentView(R.layout.activity_unlock);
-        txtFile=findViewById(R.id.txtFile); txtDetail=findViewById(R.id.txtDetail); log=findViewById(R.id.logView); bar=findViewById(R.id.progressBar);
-        findViewById(R.id.btnBack).setOnClickListener(v->finish());
-        findViewById(R.id.btnBrowse).setOnClickListener(v->pick());
-        try{ findViewById(R.id.btn0).setOnClickListener(v->run("fastboot flashing unlock")); }catch(Exception e){}
-        try{ findViewById(R.id.btn1).setOnClickListener(v->run("fastboot oem unlock")); }catch(Exception e){}
-        try{ findViewById(R.id.btn2).setOnClickListener(v->run("fastboot flashing unlock_critical")); }catch(Exception e){}
-        try{ findViewById(R.id.btn3).setOnClickListener(v->run("fastboot oem unlock-go")); }catch(Exception e){}
-        try{ findViewById(R.id.btn4).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn5).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn6).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn7).setOnClickListener(v->run("")); }catch(Exception e){}
-    }
-    void pick(){ File cur=new File("/sdcard/Download"); File[] arr=cur.listFiles(); if(arr==null) return; String[] n=new String[arr.length]; for(int i=0;i<arr.length;i++) n[i]=arr[i].getName(); new android.app.AlertDialog.Builder(this).setTitle("Select").setItems(n,(d,w)->{ file=arr[w].getAbsolutePath(); txtFile.setText(file); }).show(); }
-    void run(String c){ bar.setProgress(10); log.append("\n> "+c+"\n"); new Thread(()->{ try{ Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"}); BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream())); String l; int pr=10; while((l=r.readLine())!=null){ pr+=5; int pp=pr>90?90:pr; String ll=l; runOnUiThread(()->{ bar.setProgress(pp); txtDetail.setText(pp+" percent "+ll); log.append(ll+"\n"); }); } p.waitFor(); runOnUiThread(()->bar.setProgress(100)); }catch(Exception e){ runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n")); } }).start(); }
+public class UnlockActivity extends Activity{
+TextView txtDetail,log;ProgressBar bar;
+@Override protected void onCreate(Bundle b){super.onCreate(b);setContentView(R.layout.activity_unlock);txtDetail=findViewById(R.id.txtDetail);log=findViewById(R.id.logView);bar=findViewById(R.id.progressBar);findViewById(R.id.btnBack).setOnClickListener(v->finish());
+findViewById(R.id.btn_CHECK_BL_status_fastboot_oem_device-info).setOnClickListener(v->run("fastboot oem device-info; fastboot getvar unlocked; fastboot flashing get_unlock_ability"));
+findViewById(R.id.btn_UNLOCK_flashing_unlock).setOnClickListener(v->run("fastboot flashing unlock"));
+findViewById(R.id.btn_UNLOCK_flashing_unlock_critical).setOnClickListener(v->run("fastboot flashing unlock_critical"));
+findViewById(R.id.btn_UNLOCK_oem_unlock).setOnClickListener(v->run("fastboot oem unlock"));
+findViewById(R.id.btn_UNLOCK_oem_unlock-go).setOnClickListener(v->run("fastboot oem unlock-go"));
+findViewById(R.id.btn_LOCK_flashing_lock).setOnClickListener(v->run("fastboot flashing lock"));
+findViewById(R.id.btn_LOCK_flashing_lock_critical).setOnClickListener(v->run("fastboot flashing lock_critical"));
+findViewById(R.id.btn_MTK_UNLOCK).setOnClickListener(v->run("python3 -m mtk da seccfg unlock; python3 -m mtk xflash seccfg unlock"));
+findViewById(R.id.btn_SAMSUNG_UNLOCK_via_oem_unlock).setOnClickListener(v->run("adb shell svc oem unlock; fastboot oem unlock"));
+findViewById(R.id.btn_RELOCK).setOnClickListener(v->run("fastboot flashing lock; fastboot oem lock"));
+
+}
+void run(String c){bar.setProgress(5);log.append("\n> "+c+"\n");new Thread(()->{try{Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"});BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream()));String l;int pr=5;while((l=r.readLine())!=null){pr+=3;if(pr>95) pr=95;String ll=l;int pp=pr;runOnUiThread(()->{bar.setProgress(pp);txtDetail.setText(pp+"% "+ll);log.append(ll+"\n");});}p.waitFor();runOnUiThread(()->bar.setProgress(100));}catch(Exception e){runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n"));}}).start();}
 }

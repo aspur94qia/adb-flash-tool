@@ -1,21 +1,17 @@
-
 package com.otgflasher.pro;
 import android.app.Activity;import android.os.Bundle;import android.widget.*;import java.io.*;
-public class MiActivity extends Activity {
-    TextView txtFile, txtDetail, log; ProgressBar bar; String file="/sdcard/Download/";
-    @Override protected void onCreate(Bundle b){ super.onCreate(b); setContentView(R.layout.activity_mi);
-        txtFile=findViewById(R.id.txtFile); txtDetail=findViewById(R.id.txtDetail); log=findViewById(R.id.logView); bar=findViewById(R.id.progressBar);
-        findViewById(R.id.btnBack).setOnClickListener(v->finish());
-        findViewById(R.id.btnBrowse).setOnClickListener(v->pick());
-        try{ findViewById(R.id.btn0).setOnClickListener(v->run("adb shell pm disable-user com.xiaomi.finddevice")); }catch(Exception e){}
-        try{ findViewById(R.id.btn1).setOnClickListener(v->run("rm -rf /data/system/micloud")); }catch(Exception e){}
-        try{ findViewById(R.id.btn2).setOnClickListener(v->run("settings put secure micloud_status 0")); }catch(Exception e){}
-        try{ findViewById(R.id.btn3).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn4).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn5).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn6).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn7).setOnClickListener(v->run("")); }catch(Exception e){}
-    }
-    void pick(){ File cur=new File("/sdcard/Download"); File[] arr=cur.listFiles(); if(arr==null) return; String[] n=new String[arr.length]; for(int i=0;i<arr.length;i++) n[i]=arr[i].getName(); new android.app.AlertDialog.Builder(this).setTitle("Select").setItems(n,(d,w)->{ file=arr[w].getAbsolutePath(); txtFile.setText(file); }).show(); }
-    void run(String c){ bar.setProgress(10); log.append("\n> "+c+"\n"); new Thread(()->{ try{ Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"}); BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream())); String l; int pr=10; while((l=r.readLine())!=null){ pr+=5; int pp=pr>90?90:pr; String ll=l; runOnUiThread(()->{ bar.setProgress(pp); txtDetail.setText(pp+" percent "+ll); log.append(ll+"\n"); }); } p.waitFor(); runOnUiThread(()->bar.setProgress(100)); }catch(Exception e){ runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n")); } }).start(); }
+public class MiActivity extends Activity{
+TextView txtDetail,log;ProgressBar bar;
+@Override protected void onCreate(Bundle b){super.onCreate(b);setContentView(R.layout.activity_mi);txtDetail=findViewById(R.id.txtDetail);log=findViewById(R.id.logView);bar=findViewById(R.id.progressBar);findViewById(R.id.btnBack).setOnClickListener(v->finish());
+findViewById(R.id.btn_DISABLE_FindDevice_pm_disable).setOnClickListener(v->run("adb shell pm disable-user --user 0 com.xiaomi.finddevice"));
+findViewById(R.id.btn_ERASE_micloud_data_system_micloud).setOnClickListener(v->run("adb shell rm -rf /data/system/micloud; adb shell rm -rf /data/system/users/0/micloud"));
+findViewById(R.id.btn_DISABLE_micloud_settings).setOnClickListener(v->run("adb shell settings put secure micloud_status 0; adb shell settings put secure find_device_enabled 0"));
+findViewById(R.id.btn_ERASE_frp).setOnClickListener(v->run("fastboot erase frp"));
+findViewById(R.id.btn_ERASE_persist).setOnClickListener(v->run("fastboot erase persist"));
+findViewById(R.id.btn_BYPASS_Mi_Account_via_adb).setOnClickListener(v->run("adb shell pm disable-user --user 0 com.xiaomi.xmsf; adb shell pm disable-user --user 0 com.xiaomi.micloudsdk"));
+findViewById(R.id.btn_REMOVE_Mi_Account_persist.img).setOnClickListener(v->run("fastboot flash persist /sdcard/Download/persist.img"));
+findViewById(R.id.btn_REBOOT).setOnClickListener(v->run("adb reboot"));
+
+}
+void run(String c){bar.setProgress(5);log.append("\n> "+c+"\n");new Thread(()->{try{Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"});BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream()));String l;int pr=5;while((l=r.readLine())!=null){pr+=3;if(pr>95) pr=95;String ll=l;int pp=pr;runOnUiThread(()->{bar.setProgress(pp);txtDetail.setText(pp+"% "+ll);log.append(ll+"\n");});}p.waitFor();runOnUiThread(()->bar.setProgress(100));}catch(Exception e){runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n"));}}).start();}
 }

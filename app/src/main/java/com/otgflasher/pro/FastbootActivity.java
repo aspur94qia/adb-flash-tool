@@ -1,21 +1,26 @@
-
 package com.otgflasher.pro;
 import android.app.Activity;import android.os.Bundle;import android.widget.*;import java.io.*;
-public class FastbootActivity extends Activity {
-    TextView txtFile, txtDetail, log; ProgressBar bar; String file="/sdcard/Download/";
-    @Override protected void onCreate(Bundle b){ super.onCreate(b); setContentView(R.layout.activity_fastboot);
-        txtFile=findViewById(R.id.txtFile); txtDetail=findViewById(R.id.txtDetail); log=findViewById(R.id.logView); bar=findViewById(R.id.progressBar);
-        findViewById(R.id.btnBack).setOnClickListener(v->finish());
-        findViewById(R.id.btnBrowse).setOnClickListener(v->pick());
-        try{ findViewById(R.id.btn0).setOnClickListener(v->run("fastboot flash boot_a /sdcard/Download/boot.img")); }catch(Exception e){}
-        try{ findViewById(R.id.btn1).setOnClickListener(v->run("fastboot reboot bootloader")); }catch(Exception e){}
-        try{ findViewById(R.id.btn2).setOnClickListener(v->run("fastboot flashing unlock")); }catch(Exception e){}
-        try{ findViewById(R.id.btn3).setOnClickListener(v->run("fastboot flashing lock")); }catch(Exception e){}
-        try{ findViewById(R.id.btn4).setOnClickListener(v->run("fastboot reboot")); }catch(Exception e){}
-        try{ findViewById(R.id.btn5).setOnClickListener(v->run("fastboot erase frp")); }catch(Exception e){}
-        try{ findViewById(R.id.btn6).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn7).setOnClickListener(v->run("")); }catch(Exception e){}
-    }
-    void pick(){ File cur=new File("/sdcard/Download"); File[] arr=cur.listFiles(); if(arr==null) return; String[] n=new String[arr.length]; for(int i=0;i<arr.length;i++) n[i]=arr[i].getName(); new android.app.AlertDialog.Builder(this).setTitle("Select").setItems(n,(d,w)->{ file=arr[w].getAbsolutePath(); txtFile.setText(file); }).show(); }
-    void run(String c){ bar.setProgress(10); log.append("\n> "+c+"\n"); new Thread(()->{ try{ Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"}); BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream())); String l; int pr=10; while((l=r.readLine())!=null){ pr+=5; int pp=pr>90?90:pr; String ll=l; runOnUiThread(()->{ bar.setProgress(pp); txtDetail.setText(pp+" percent "+ll); log.append(ll+"\n"); }); } p.waitFor(); runOnUiThread(()->bar.setProgress(100)); }catch(Exception e){ runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n")); } }).start(); }
+public class FastbootActivity extends Activity{
+TextView txtDetail,log;ProgressBar bar;
+@Override protected void onCreate(Bundle b){super.onCreate(b);setContentView(R.layout.activity_fastboot);txtDetail=findViewById(R.id.txtDetail);log=findViewById(R.id.logView);bar=findViewById(R.id.progressBar);findViewById(R.id.btnBack).setOnClickListener(v->finish());
+findViewById(R.id.btn_FLASH_boot_a).setOnClickListener(v->run("fastboot flash boot_a /sdcard/Download/boot.img"));
+findViewById(R.id.btn_FLASH_boot_b).setOnClickListener(v->run("fastboot flash boot_b /sdcard/Download/boot.img"));
+findViewById(R.id.btn_FLASH_boot).setOnClickListener(v->run("fastboot flash boot /sdcard/Download/boot.img"));
+findViewById(R.id.btn_FLASH_recovery).setOnClickListener(v->run("fastboot flash recovery /sdcard/Download/recovery.img"));
+findViewById(R.id.btn_FLASH_vbmeta).setOnClickListener(v->run("fastboot flash vbmeta /sdcard/Download/vbmeta.img"));
+findViewById(R.id.btn_FLASH_vbmeta_a).setOnClickListener(v->run("fastboot flash vbmeta_a /sdcard/Download/vbmeta.img"));
+findViewById(R.id.btn_FLASH_super).setOnClickListener(v->run("fastboot flash super /sdcard/Download/super.img"));
+findViewById(R.id.btn_FLASH_system).setOnClickListener(v->run("fastboot flash system /sdcard/Download/system.img"));
+findViewById(R.id.btn_ERASE_frp).setOnClickListener(v->run("fastboot erase frp"));
+findViewById(R.id.btn_ERASE_userdata).setOnClickListener(v->run("fastboot erase userdata"));
+findViewById(R.id.btn_SET_ACTIVE_A).setOnClickListener(v->run("fastboot --set-active=a"));
+findViewById(R.id.btn_SET_ACTIVE_B).setOnClickListener(v->run("fastboot --set-active=b"));
+findViewById(R.id.btn_REBOOT_bootloader).setOnClickListener(v->run("fastboot reboot bootloader"));
+findViewById(R.id.btn_REBOOT_system).setOnClickListener(v->run("fastboot reboot"));
+findViewById(R.id.btn_UNLOCK_BL).setOnClickListener(v->run("fastboot flashing unlock"));
+findViewById(R.id.btn_LOCK_BL).setOnClickListener(v->run("fastboot flashing lock"));
+findViewById(R.id.btn_OEM_device-info).setOnClickListener(v->run("fastboot oem device-info"));
+
+}
+void run(String c){bar.setProgress(5);log.append("\n> "+c+"\n");new Thread(()->{try{Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"});BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream()));String l;int pr=5;while((l=r.readLine())!=null){pr+=3;if(pr>95) pr=95;String ll=l;int pp=pr;runOnUiThread(()->{bar.setProgress(pp);txtDetail.setText(pp+"% "+ll);log.append(ll+"\n");});}p.waitFor();runOnUiThread(()->bar.setProgress(100));}catch(Exception e){runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n"));}}).start();}
 }

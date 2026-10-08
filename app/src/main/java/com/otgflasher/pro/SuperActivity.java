@@ -1,21 +1,17 @@
-
 package com.otgflasher.pro;
 import android.app.Activity;import android.os.Bundle;import android.widget.*;import java.io.*;
-public class SuperActivity extends Activity {
-    TextView txtFile, txtDetail, log; ProgressBar bar; String file="/sdcard/Download/";
-    @Override protected void onCreate(Bundle b){ super.onCreate(b); setContentView(R.layout.activity_super);
-        txtFile=findViewById(R.id.txtFile); txtDetail=findViewById(R.id.txtDetail); log=findViewById(R.id.logView); bar=findViewById(R.id.progressBar);
-        findViewById(R.id.btnBack).setOnClickListener(v->finish());
-        findViewById(R.id.btnBrowse).setOnClickListener(v->pick());
-        try{ findViewById(R.id.btn0).setOnClickListener(v->run("lpunpack super.img out")); }catch(Exception e){}
-        try{ findViewById(R.id.btn1).setOnClickListener(v->run("mount out/system.img")); }catch(Exception e){}
-        try{ findViewById(R.id.btn2).setOnClickListener(v->run("cp out/system.img system.img")); }catch(Exception e){}
-        try{ findViewById(R.id.btn3).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn4).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn5).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn6).setOnClickListener(v->run("")); }catch(Exception e){}
-        try{ findViewById(R.id.btn7).setOnClickListener(v->run("")); }catch(Exception e){}
-    }
-    void pick(){ File cur=new File("/sdcard/Download"); File[] arr=cur.listFiles(); if(arr==null) return; String[] n=new String[arr.length]; for(int i=0;i<arr.length;i++) n[i]=arr[i].getName(); new android.app.AlertDialog.Builder(this).setTitle("Select").setItems(n,(d,w)->{ file=arr[w].getAbsolutePath(); txtFile.setText(file); }).show(); }
-    void run(String c){ bar.setProgress(10); log.append("\n> "+c+"\n"); new Thread(()->{ try{ Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"}); BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream())); String l; int pr=10; while((l=r.readLine())!=null){ pr+=5; int pp=pr>90?90:pr; String ll=l; runOnUiThread(()->{ bar.setProgress(pp); txtDetail.setText(pp+" percent "+ll); log.append(ll+"\n"); }); } p.waitFor(); runOnUiThread(()->bar.setProgress(100)); }catch(Exception e){ runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n")); } }).start(); }
+public class SuperActivity extends Activity{
+TextView txtDetail,log;ProgressBar bar;
+@Override protected void onCreate(Bundle b){super.onCreate(b);setContentView(R.layout.activity_super);txtDetail=findViewById(R.id.txtDetail);log=findViewById(R.id.logView);bar=findViewById(R.id.progressBar);findViewById(R.id.btnBack).setOnClickListener(v->finish());
+findViewById(R.id.btn_LIST_inside_super_lpdump).setOnClickListener(v->run("lpdump /sdcard/Download/super.img"));
+findViewById(R.id.btn_UNPACK_ALL_lpunpack).setOnClickListener(v->run("lpunpack /sdcard/Download/super.img /sdcard/Download/out/"));
+findViewById(R.id.btn_EXTRACT_system.img).setOnClickListener(v->run("cp /sdcard/Download/out/system.img /sdcard/Download/system.img"));
+findViewById(R.id.btn_EXTRACT_vendor.img).setOnClickListener(v->run("cp /sdcard/Download/out/vendor.img /sdcard/Download/vendor.img"));
+findViewById(R.id.btn_EXTRACT_product.img).setOnClickListener(v->run("cp /sdcard/Download/out/product.img /sdcard/Download/product.img"));
+findViewById(R.id.btn_MOUNT_system).setOnClickListener(v->run("mkdir -p /mnt/system; mount -o loop /sdcard/Download/out/system.img /mnt/system"));
+findViewById(R.id.btn_RESIZE_super).setOnClickListener(v->run("lpresize /sdcard/Download/super.img"));
+findViewById(R.id.btn_FLASH_super).setOnClickListener(v->run("fastboot flash super /sdcard/Download/super.img"));
+
+}
+void run(String c){bar.setProgress(5);log.append("\n> "+c+"\n");new Thread(()->{try{Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"});BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream()));String l;int pr=5;while((l=r.readLine())!=null){pr+=3;if(pr>95) pr=95;String ll=l;int pp=pr;runOnUiThread(()->{bar.setProgress(pp);txtDetail.setText(pp+"% "+ll);log.append(ll+"\n");});}p.waitFor();runOnUiThread(()->bar.setProgress(100));}catch(Exception e){runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n"));}}).start();}
 }
