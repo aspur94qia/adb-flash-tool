@@ -3,9 +3,24 @@ import android.content.Intent;
 import android.net.Uri;
 import java.io.*;
 import android.os.Bundle;import android.widget.*;import java.io.*;public class PayloadActivity extends Activity{
+ private String pickedFilePathV3="";
+
 private String pickedFilePath="";
 private String pickedFileName="";
 TextView txtDetail,log;ProgressBar bar;@Override protected void onCreate(Bundle b){super.onCreate(b);setContentView(R.layout.activity_payload);
+        try{
+            android.view.View first=findViewById(R.id.btn_back);
+            if(first!=null){
+                android.view.ViewGroup par=(android.view.ViewGroup)first.getParent();
+                android.widget.Button btnPickV3=new android.widget.Button(this);
+                btnPickV3.setText("📁 PILIH FILE FIRMWARE");
+                btnPickV3.setBackgroundColor(0xFFFF6D00);
+                btnPickV3.setTextColor(0xFFFFFFFF);
+                btnPickV3.setOnClickListener(v->pickFileV3());
+                par.addView(btnPickV3,0);
+            }
+        }catch(Exception e){}
+
         try {
             android.widget.Button btnPick = new android.widget.Button(this);
             btnPick.setText("PILIH FILE FIRMWARE");
@@ -54,4 +69,13 @@ protected void onActivityResult(int req, int res, Intent data) {
     }
 }
 
-void run(String c){bar.setProgress(5);log.append("\n> "+c+"\n");new Thread(()->{try{Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"});BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream()));String l;int pr=5;while((l=r.readLine())!=null){pr+=2;if(pr>95)pr=95;String ll=l;int pp=pr;runOnUiThread(()->{bar.setProgress(pp);txtDetail.setText(pp+"% "+ll);log.append(ll+"\n");});}p.waitFor();runOnUiThread(()->bar.setProgress(100));}catch(Exception e){runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n"));}}).start();}}
+
+    private void pickFileV3(){
+        try{
+            Intent i=new Intent(Intent.ACTION_GET_CONTENT);
+            i.setType("*/*"); i.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(Intent.createChooser(i,"PILIH FILE"),8888);
+        }catch(Exception e){ android.widget.Toast.makeText(this,"ERR: "+e,1).show(); }
+    }
+
+ void run(String c){bar.setProgress(5);log.append("\n> "+c+"\n");new Thread(()->{try{Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"});BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream()));String l;int pr=5;while((l=r.readLine())!=null){pr+=2;if(pr>95)pr=95;String ll=l;int pp=pr;runOnUiThread(()->{bar.setProgress(pp);txtDetail.setText(pp+"% "+ll);log.append(ll+"\n");});}p.waitFor();runOnUiThread(()->bar.setProgress(100));}catch(Exception e){runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n"));}}).start();}}
