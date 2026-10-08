@@ -2,7 +2,7 @@ import os
 for p in ["app/src/main/java/com/otgflasher/pro","app/src/main/res/layout","app/src/main/res/values","app/src/main/res/mipmap-hdpi"]:
  os.makedirs(p,exist_ok=True)
 open("settings.gradle","w").write("include ':app'")
-open("build.gradle","w").write("buildscript {\n repositories {\n google()\n mavenCentral()\n }\n dependencies {\n classpath 'com.android.tools.build:gradle:8.2.2'\n }\n}\n")
+open("build.gradle","w").write("buildscript {\n  repositories {\n    google()\n    mavenCentral()\n  }\n  dependencies {\n    classpath 'com.android.tools.build:gradle:8.2.2'\n  }\n}\n")
 open("gradle.properties","w").write("android.useAndroidX=true")
 open("app/build.gradle","w").write("apply plugin: 'com.android.application'\nandroid{compileSdk 34;namespace 'com.otgflasher.pro';defaultConfig{applicationId 'com.otgflasher.pro';minSdk 26;targetSdk 34;versionCode 1;versionName '1.0'}}")
 open("app/src/main/res/values/strings.xml","w").write('<resources><string name="app_name">OTG Flasher</string></resources>')
