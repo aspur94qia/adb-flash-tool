@@ -20,6 +20,6 @@ public class MainActivity extends AppCompatActivity {
         br=new BroadcastReceiver(){ public void onReceive(Context c, Intent i){ if(UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(i.getAction())){ UsbDevice d=i.getParcelableExtra(UsbManager.EXTRA_DEVICE); if(d!=null) tvUsb.setText("USB CONNECTED: "+d.getDeviceName()); }else if(UsbManager.ACTION_USB_DEVICE_DETACHED.equals(i.getAction())) tvUsb.setText("USB DISCONNECTED"); } };
         IntentFilter f=new IntentFilter(); f.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED); f.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED); registerReceiver(br,f);
     }
-    @Override protected void onActivityResult(int q,int w,Intent d){ super.onActivityResult(q,w,d); if(q==1001&&w==RESULT_OK&&d!=null){ try{ picked=FilePickerHelper.getPath(this,d.getData()); tvFile.setText("FILE: "+picked); pb.setProgress(10); }catch(Exception e){} } }
+    protected void onActivityResult(int q,int w,Intent d){ super.onActivityResult(q,w,d); if(q==1001&&w==RESULT_OK&&d!=null){ try{ picked=FilePickerHelper.getPath(this,d.getData()); tvFile.setText("FILE: "+picked); pb.setProgress(10); }catch(Exception e){} } }
     @Override protected void onDestroy(){ try{ unregisterReceiver(br); }catch(Exception e){} super.onDestroy(); }
 }
