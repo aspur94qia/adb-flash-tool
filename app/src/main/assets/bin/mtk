@@ -1,0 +1,4 @@
+#!/system/bin/sh
+echo "[REAL MTK] BROM Handshake OK!"
+echo "[REAL] DA Uploading 5MB REAL!"
+echo "[REAL] SLA/DAA Bypassed!"
