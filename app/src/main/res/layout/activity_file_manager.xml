@@ -1,28 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#121212">
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="60dp" android:background="#4CAF50" android:gravity="center_vertical" android:padding="8dp">
-<Button android:id="@+id/btnBack" android:layout_width="60dp" android:layout_height="48dp" android:text="◀️ BACK" android:textSize="12sp"/>
+<Button android:id="@+id/btnBack" android:layout_width="60dp" android:layout_height="48dp" android:text="BACK" android:textSize="12sp"/>
 <TextView android:id="@+id/txtPath" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="/sdcard/Download" android:textColor="#FFF" android:textSize="13sp" android:padding="8dp" android:textStyle="bold"/>
 <Button android:id="@+id/btnUp" android:layout_width="64dp" android:layout_height="48dp" android:text="UP" android:textSize="12sp" android:backgroundTint="#000"/>
 </LinearLayout>
 <ListView android:id="@+id/listFiles" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="#1E1E1E" android:divider="#333" android:dividerHeight="1dp"/>
 <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#222" android:padding="8dp">
-<TextView android:id="@+id/txtSelected" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="No file selected - tap file to select" android:textColor="#0F0" android:textSize="12sp" android:padding="4dp"/>
-<ProgressBar android:id="@+id/fmProgress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="12dp" android:visibility="gone"/>
+<TextView android:id="@+id/txtSelected" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="No file selected" android:textColor="#0F0" android:textSize="12sp" android:padding="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
-<Button android:id="@+id/btnExtract" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="📦 EXTRACT" android:textSize="11sp" android:backgroundTint="#4CAF50"/>
+<Button android:id="@+id/btnExtract" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="EXTRACT" android:textSize="11sp" android:backgroundTint="#4CAF50"/>
 <Button android:id="@+id/btnCreateZip" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="CREATE ZIP" android:textSize="10sp" android:backgroundTint="#FF9800" android:layout_marginStart="4dp"/>
 <Button android:id="@+id/btnCreateTar" android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:text="TAR.GZ" android:textSize="10sp" android:layout_marginStart="4dp"/>
 </LinearLayout>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
-<Button android:id="@+id/btnCopy" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="COPY" android:textSize="11sp"/>
-<Button android:id="@+id/btnCut" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="CUT" android:textSize="11sp" android:layout_marginStart="4dp"/>
-<Button android:id="@+id/btnDelete" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="DELETE" android:textSize="11sp" android:backgroundTint="#D32F2F" android:layout_marginStart="4dp"/>
+<Button android:id="@+id/btnDelete" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="DELETE" android:textSize="11sp" android:backgroundTint="#D32F2F"/>
 <Button android:id="@+id/btnRename" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="RENAME" android:textSize="10sp" android:layout_marginStart="4dp"/>
-</LinearLayout>
-<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
-<Button android:id="@+id/btnFlashHere" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="⚡ FLASH THIS FILE" android:textSize="11sp" android:backgroundTint="#D32F2F"/>
-<Button android:id="@+id/btnProps" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="PROPERTIES" android:textSize="10sp" android:layout_marginStart="4dp"/>
+<Button android:id="@+id/btnFlashHere" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="FLASH THIS" android:textSize="11sp" android:backgroundTint="#D32F2F" android:layout_marginStart="4dp"/>
 </LinearLayout>
 </LinearLayout>
 </LinearLayout>
