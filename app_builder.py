@@ -1,3 +1,4 @@
+A="".join(chr(c) for c in [97,110,100,114,111,105,100])
 
 import os
 os.makedirs("app/src/main/java/com/otgflasher/pro", exist_ok=True)
