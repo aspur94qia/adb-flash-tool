@@ -1,3 +1,3 @@
 plugins{ id 'com.android.application' }
-android{ compileSdk 34; namespace 'com.otgflasher.pro'; defaultConfig{ applicationId 'com.otgflasher.pro'; minSdk 26; targetSdk 34; versionCode 16; versionName '16.0 WHITE 2COL ICON ONLY' } }
+android{ compileSdk 34; namespace 'com.otgflasher.pro'; defaultConfig{ applicationId 'com.otgflasher.pro'; minSdk 26; targetSdk 34; versionCode 17; versionName '17.0 FIX XML' } }
 dependencies{ implementation 'androidx.appcompat:appcompat:1.6.1' }
