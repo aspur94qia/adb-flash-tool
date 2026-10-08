@@ -12,7 +12,7 @@ jobs:
 
       - name: Setup Android SDK MANUALLY
         run: |
-          echo "y" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || true
           ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" || true
 
       - name: Create APP
@@ -22,21 +22,33 @@ jobs:
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
           mkdir -p app/src/main/res/drawable
-          mkdir -p app/src/main/res/mipmap-hdpi
-          mkdir -p app/src/main/res/mipmap-mdpi
-          mkdir -p app/src/main/res/mipmap-xhdpi
-          mkdir -p app/src/main/res/mipmap-xxhdpi
-          mkdir -p app/src/main/res/mipmap-xxxhdpi
+          mkdir -p app/src/main/res/mipmap-hdpi app/src/main/res/mipmap-mdpi app/src/main/res/mipmap-xhdpi app/src/main/res/mipmap-xxhdpi app/src/main/res/mipmap-xxxhdpi
+          cat > gradle.properties << 'PROP'
+          android.useAndroidX=true
+          PROP
+          cat > settings.gradle << 'SET'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral() } }
+          include ':app'
+          SET
+          cat > build.gradle << 'ROOT'
+          plugins { id 'com.android.application' version '8.2.2' apply false }
+          ROOT
+          cat > app/build.gradle << 'APP'
+          plugins { id 'com.android.application' }
+          android { compileSdk 34; namespace 'com.otgflasher.pro'; defaultConfig { applicationId 'com.otgflasher.pro'; minSdk 24; targetSdk 34; versionCode 170; versionName "1.7" } buildTypes { release { minifyEnabled false } } }
+          dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'com.google.android.material:material:1.11.0' }
+          APP
+          cat > app/src/main/res/values/colors.xml << 'C'
+          <resources><color name="bg">#010C1F</color></resources>
+          C
+          cat > app/src/main/res/values/themes.xml << 'T'
+          <resources><style name="Theme.OTG" parent="Theme.Material3.DayNight.NoActionBar"><item name="android:statusBarColor">#010C1F</item></style></resources>
+          T
           python3 << 'PY'
-          import os
-          open("gradle.properties","w").write("android.useAndroidX=true\n")
-          open("settings.gradle","w").write("include ':app'\n")
-          open("build.gradle","w").write('buildscript { repositories { google(); mavenCentral() } dependencies { classpath "com.android.tools.build:gradle:8.2.2" } } allprojects { repositories { google(); mavenCentral() } }')
-          open("app/build.gradle","w").write('plugins { id "com.android.application" }\nandroid { compileSdk 34; namespace "com.otgflasher.pro"; defaultConfig { applicationId "com.otgflasher.pro"; minSdk 24; targetSdk 34; versionCode 170; versionName "1.7" } buildTypes { release { minifyEnabled false } } }\ndependencies { implementation "androidx.appcompat:appcompat:1.6.1"; implementation "com.google.android.material:material:1.11.0" }\n')
-          open("app/src/main/res/values/colors.xml","w").write('<resources><color name="bg">#010C1F</color></resources>')
-          open("app/src/main/res/values/themes.xml","w").write('<resources><style name="Theme.OTG" parent="Theme.Material3.DayNight.NoActionBar"><item name="android:statusBarColor">#010C1F</item></style></resources>')
           from PIL import Image, ImageDraw
-          def mk(sz,f): img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4); img.save(f"app/src/main/res/{f}/ic_launcher.png")
+          def mk(sz,f): 
+           img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4); img.save(f"app/src/main/res/{f}/ic_launcher.png")
           [mk(s,f) for s,f in [(192,"mipmap-xxxhdpi"),(144,"mipmap-xxhdpi"),(96,"mipmap-xhdpi"),(72,"mipmap-hdpi"),(48,"mipmap-mdpi")]]
           open("app/src/main/res/drawable/bg_card_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1A33"/></shape>')
           open("app/src/main/res/drawable/bg_header_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1930"/></shape>')
@@ -52,7 +64,7 @@ jobs:
            @Override protected void onCreate(Bundle b){
             super.onCreate(b);
             TextView tv=new TextView(this);
-            tv.setText("OTG Flasher Pro v1.7\nFULL WORKING\n8 TOOLS + ADB + FASTBOOT\nFIXED BUILD!");
+            tv.setText("OTG Flasher Pro v1.7\nFIXED BUILD SUCCESS!");
             tv.setTextColor(0xFF00D4FF); tv.setPadding(40,120,40,40); tv.setTextSize(18);
             setContentView(tv);
            }
