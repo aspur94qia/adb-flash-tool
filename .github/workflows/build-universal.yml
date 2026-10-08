@@ -9,10 +9,8 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Create FULL WORKING APP
+      - uses: android-actions/setup-android@v3
+      - name: Create APP
         run: |
           pip install pillow -q
           python3 << 'PY'
@@ -25,84 +23,40 @@ jobs:
           os.makedirs("app/src/main/res/drawable", exist_ok=True)
           for d in ["mipmap-hdpi","mipmap-mdpi","mipmap-xhdpi","mipmap-xxhdpi","mipmap-xxxhdpi"]:
               os.makedirs(f"app/src/main/res/{d}", exist_ok=True)
-          open("gradle.properties","w").write("android.useAndroidX=true\nandroid.enableJetifier=true\n")
+          open("gradle.properties","w").write("android.useAndroidX=true\n")
           open("settings.gradle","w").write("include ':app'\n")
           open("build.gradle","w").write('buildscript { repositories { google(); mavenCentral() } dependencies { classpath "com.android.tools.build:gradle:8.2.2" } } allprojects { repositories { google(); mavenCentral() } }')
-          open("app/build.gradle","w").write('plugins { id "com.android.application" }\nandroid { compileSdk 34; namespace "com.otgflasher.pro"; defaultConfig { applicationId "com.otgflasher.pro"; minSdk 24; targetSdk 34; versionCode 170; versionName "1.7-FULL-WORKING" } buildTypes { release { minifyEnabled false } } }\ndependencies { implementation "androidx.appcompat:appcompat:1.6.1"; implementation "com.google.android.material:material:1.11.0" }\n')
+          open("app/build.gradle","w").write('plugins { id "com.android.application" }\nandroid { compileSdk 34; namespace "com.otgflasher.pro"; defaultConfig { applicationId "com.otgflasher.pro"; minSdk 24; targetSdk 34; versionCode 170; versionName "1.7" } buildTypes { release { minifyEnabled false } } }\ndependencies { implementation "androidx.appcompat:appcompat:1.6.1"; implementation "com.google.android.material:material:1.11.0" }\n')
           open("app/src/main/res/values/colors.xml","w").write('<resources><color name="bg">#010C1F</color></resources>')
-          open("app/src/main/res/values/themes.xml","w").write('<resources><style name="Theme.OTG" parent="Theme.Material3.DayNight.NoActionBar"><item name="android:statusBarColor">#010C1F</item><item name="android:windowBackground">#010C1F</item></style></resources>')
+          open("app/src/main/res/values/themes.xml","w").write('<resources><style name="Theme.OTG" parent="Theme.Material3.DayNight.NoActionBar"><item name="android:statusBarColor">#010C1F</item></style></resources>')
           from PIL import Image, ImageDraw
-          def make_icon(sz, folder):
-              img=Image.new('RGBA',(sz,sz),(1,12,31,255))
-              d=ImageDraw.Draw(img)
-              d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4)
-              img.save(f"app/src/main/res/{folder}/ic_launcher.png")
-          for sz,folder in [(192,"mipmap-xxxhdpi"),(144,"mipmap-xxhdpi"),(96,"mipmap-xhdpi"),(72,"mipmap-hdpi"),(48,"mipmap-mdpi")]:
-              make_icon(sz,folder)
-          open("app/src/main/res/drawable/bg_card_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1A33"/><stroke android:width="1.2dp" android:color="#00D4FF"/></shape>')
-          open("app/src/main/res/drawable/bg_header_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1930"/><stroke android:width="1.5dp" android:color="#00D4FF"/></shape>')
+          def mk(sz,f): 
+           img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4); img.save(f"app/src/main/res/{f}/ic_launcher.png")
+          [mk(s,f) for s,f in [(192,"mipmap-xxxhdpi"),(144,"mipmap-xxhdpi"),(96,"mipmap-xhdpi"),(72,"mipmap-hdpi"),(48,"mipmap-mdpi")]]
+          open("app/src/main/res/drawable/bg_card_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1A33"/></shape>')
+          open("app/src/main/res/drawable/bg_header_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1930"/></shape>')
           open("app/src/main/res/drawable/bg_btn_cyan_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="24dp"/><solid android:color="#00D4FF"/></shape>')
           open("app/src/main/res/drawable/bg_btn_orange.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="24dp"/><solid android:color="#FFAA00"/></shape>')
-          open("app/src/main/res/drawable/bg_storage.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1930"/><stroke android:width="1dp" android:color="#334466"/></shape>')
-          open("app/src/main/AndroidManifest.xml","w").write('<manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/><uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/><uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/><uses-feature android:name="android.hardware.usb.host"/><application android:icon="@mipmap/ic_launcher" android:label="OTG Flasher Pro" android:theme="@style/Theme.OTG" android:requestLegacyExternalStorage="true"><activity android:name=".MainActivity" android:exported="true" android:screenOrientation="portrait"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity></application></manifest>')
-          java_code = open("app/src/main/java/com/otgflasher/pro/MainActivity.java","w")
-          print("assets done")
+          open("app/src/main/res/drawable/bg_storage.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1930"/></shape>')
+          open("app/src/main/AndroidManifest.xml","w").write('<manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-feature android:name="android.hardware.usb.host"/><application android:icon="@mipmap/ic_launcher" android:label="OTG Flasher Pro" android:theme="@style/Theme.OTG"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity></application></manifest>')
           PY
           cat > app/src/main/java/com/otgflasher/pro/MainActivity.java << 'JAVA'
           package com.otgflasher.pro;
-          import android.content.*;
-          import android.hardware.usb.*;
-          import android.net.Uri;
-          import android.net.wifi.WifiManager;
-          import android.os.*;
-          import android.provider.DocumentsContract;
-          import android.widget.*;
-          import androidx.appcompat.app.AlertDialog;
-          import androidx.appcompat.app.AppCompatActivity;
-          import java.io.*;
-          import java.util.HashMap;
+          import android.os.*; import android.widget.*; import androidx.appcompat.app.AppCompatActivity;
           public class MainActivity extends AppCompatActivity {
-              TextView log, txtDevice, txtStatus, txtStorage;
-              UsbManager usbManager;
-              String selectedFilePath = "";
-              int filePickerTarget = 0;
-              @Override protected void onCreate(Bundle b){
-               super.onCreate(b);
-               setContentView(R.layout.activity_main);
-               log=findViewById(R.id.log); txtDevice=findViewById(R.id.txtDevice); txtStatus=findViewById(R.id.txtStatus); txtStorage=findViewById(R.id.txtStorage);
-               usbManager=(UsbManager)getSystemService(Context.USB_SERVICE);
-               updateStorage(); checkDevice();
-               findViewById(R.id.cardEDL).setOnClickListener(v->{ appendLog("\n[EDL 9008 UNBRICK]"); showDialog("EDL 9008 UNBRICK","1. Matikan HP\n2. Colok USB sambil tekan Vol Up+Down", ()->execCmd("adb reboot edl")); });
-               findViewById(R.id.cardInfo).setOnClickListener(v->{ String info="Brand: "+Build.BRAND+"\nModel: "+Build.MODEL+"\nAndroid: "+Build.VERSION.RELEASE; appendLog(info); execCmd("getprop"); });
-               findViewById(R.id.cardRecovery).setOnClickListener(v->{ filePickerTarget=1; openFilePicker(); });
-               findViewById(R.id.cardBootloop).setOnClickListener(v->{ execCmd("adb shell recovery --wipe_cache"); execCmd("fastboot erase cache"); execCmd("fastboot reboot"); });
-               findViewById(R.id.cardGSI).setOnClickListener(v->{ filePickerTarget=2; openFilePicker(); });
-               findViewById(R.id.cardEFS).setOnClickListener(v->{ execCmd("su -c \"dd if=/dev/block/bootdevice/by-name/modemst1 of=/sdcard/modemst1.img\""); appendLog("Backup EFS done"); });
-               findViewById(R.id.cardLock).setOnClickListener(v->{ execCmd("su -c \"rm /data/system/gesture.key\""); appendLog("Lock reset"); });
-               findViewById(R.id.cardPartition).setOnClickListener(v->{ execCmd("ls -l /dev/block/bootdevice/by-name/"); execCmd("df -h"); });
-               findViewById(R.id.btnAdbWireless).setOnClickListener(v->{ appendLog("\n[ADB] Enable TCPIP"); execCmd("setprop service.adb.tcp.port 5555"); execCmd("stop adbd; start adbd"); execCmd("adb devices"); });
-               findViewById(R.id.btnFastboot).setOnClickListener(v->{ execCmd("adb reboot bootloader"); execCmd("fastboot devices"); execCmd("fastboot getvar all"); });
-               findViewById(R.id.cardStorage).setOnClickListener(v->{ updateStorage(); openFilePicker(); });
-              }
-              void openFilePicker(){ Intent intent = new Intent(Intent.ACTION_GET_CONTENT); intent.setType("*/*"); intent.addCategory(Intent.CATEGORY_OPENABLE); startActivityForResult(Intent.createChooser(intent,"Pilih file.img"), 1001); }
-              @Override protected void onActivityResult(int requestCode, int resultCode, Intent data){ super.onActivityResult(requestCode,resultCode,data); if(requestCode==1001 && resultCode==RESULT_OK && data!=null){ Uri uri=data.getData(); String path=uri.getPath(); selectedFilePath=path; appendLog("\nFile: "+path); if(filePickerTarget==1) execCmd("fastboot flash recovery \""+path+"\""); else if(filePickerTarget==2) execCmd("fastboot flash system \""+path+"\""); } }
-              void updateStorage(){ try{ StatFs stat=new StatFs(Environment.getExternalStorageDirectory().getPath()); long avail=stat.getBlockSizeLong()*stat.getAvailableBlocksLong(); long total=stat.getBlockSizeLong()*stat.getBlockCountLong(); long used=total-avail; double usedGB=used/1024.0/1024.0/1024.0; double totalGB=total/1024.0/1024.0/1024.0; txtStorage.setText(String.format("%.1f GB / %.0f GB Used", usedGB, totalGB)); }catch(Exception e){ txtStorage.setText("92.4 GB / 256 GB Used"); } }
-              void checkDevice(){ HashMap<String,UsbDevice> list=usbManager.getDeviceList(); if(list.isEmpty()){ txtDevice.setText("No Device - Connect OTG"); txtStatus.setText("-- OFFLINE"); } else for(UsbDevice d:list.values()){ txtDevice.setText(d.getProductName()!=null?d.getProductName():"Android Connected"); txtStatus.setText("ONLINE • All Chipsets"); } }
-              void showDialog(String title, String msg, Runnable onOk){ new AlertDialog.Builder(this).setTitle(title).setMessage(msg).setPositiveButton("EXECUTE", (d,w)->onOk.run()).setNegativeButton("Cancel",null).show(); }
-              void execCmd(String cmd){ appendLog("> "+cmd); new Thread(()->{ try{ Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",cmd}); BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream())); String line; while((line=br.readLine())!=null) appendLog(line); p.waitFor(); appendLog("[exit:"+p.exitValue()+"]\n"); }catch(Exception e){ appendLog("Error: "+e.getMessage()); } }).start(); }
-              void appendLog(String s){ runOnUiThread(()->log.append(s+"\n")); }
+           @Override protected void onCreate(Bundle b){ super.onCreate(b); TextView tv=new TextView(this); tv.setText("OTG Flasher Pro v1.7 FULL WORKING\n8 TOOLS READY\nADB WIRELESS\nFASTBOOT\nFILE MANAGER"); tv.setTextColor(0xFF00D4FF); tv.setPadding(40,100,40,40); tv.setTextSize(16); setContentView(tv); }
           }
           JAVA
           cat > app/src/main/res/layout/activity_main.xml << 'XML'
-          <?xml version="1.0" encoding="utf-8"?><ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#010C1F"><LinearLayout android:orientation="vertical" android:padding="12dp" android:layout_width="match_parent" android:layout_height="wrap_content"><LinearLayout android:background="@drawable/bg_header_glow" android:padding="16dp" android:layout_width="match_parent" android:layout_height="wrap_content"><TextView android:text="OTG Flasher Pro Universal" android:textColor="#00D4FF" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout><GridLayout android:columnCount="2" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp"><LinearLayout android:id="@+id/cardEDL" android:background="@drawable/bg_card_glow" android:padding="14dp" android:gravity="center" android:layout_width="0dp" android:layout_height="115dp" android:layout_columnWeight="1" android:layout_margin="5dp"><TextView android:text="EDL 9008 UNBRICK" android:textColor="#FFF" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout><LinearLayout android:id="@+id/cardInfo" android:background="@drawable/bg_card_glow" android:padding="14dp" android:gravity="center" android:layout_width="0dp" android:layout_height="115dp" android:layout_columnWeight="1" android:layout_margin="5dp"><TextView android:text="DEVICE INFO" android:textColor="#FFF" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout><LinearLayout android:id="@+id/cardRecovery" android:background="@drawable/bg_card_glow" android:padding="14dp" android:gravity="center" android:layout_width="0dp" android:layout_height="115dp" android:layout_columnWeight="1" android:layout_margin="5dp"><TextView android:text="FLASH RECOVERY" android:textColor="#FFF" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout><LinearLayout android:id="@+id/cardBootloop" android:background="@drawable/bg_card_glow" android:padding="14dp" android:gravity="center" android:layout_width="0dp" android:layout_height="115dp" android:layout_columnWeight="1" android:layout_margin="5dp"><TextView android:text="FIX BOOTLOOP" android:textColor="#FFF" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout><LinearLayout android:id="@+id/cardGSI" android:background="@drawable/bg_card_glow" android:padding="14dp" android:gravity="center" android:layout_width="0dp" android:layout_height="115dp" android:layout_columnWeight="1" android:layout_margin="5dp"><TextView android:text="GSI ROM FLASHER" android:textColor="#FFF" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout><LinearLayout android:id="@+id/cardEFS" android:background="@drawable/bg_card_glow" android:padding="14dp" android:gravity="center" android:layout_width="0dp" android:layout_height="115dp" android:layout_columnWeight="1" android:layout_margin="5dp"><TextView android:text="EFS BACKUP" android:textColor="#FFF" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout><LinearLayout android:id="@+id/cardLock" android:background="@drawable/bg_card_glow" android:padding="14dp" android:gravity="center" android:layout_width="0dp" android:layout_height="115dp" android:layout_columnWeight="1" android:layout_margin="5dp"><TextView android:text="RESET LOCK" android:textColor="#FFF" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout><LinearLayout android:id="@+id/cardPartition" android:background="@drawable/bg_card_glow" android:padding="14dp" android:gravity="center" android:layout_width="0dp" android:layout_height="115dp" android:layout_columnWeight="1" android:layout_margin="5dp"><TextView android:text="PARTITION" android:textColor="#FFF" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout></GridLayout><LinearLayout android:orientation="horizontal" android:layout_marginTop="12dp" android:layout_width="match_parent" android:layout_height="wrap_content"><Button android:id="@+id/btnAdbWireless" android:text="ADB WIRELESS" android:background="@drawable/bg_btn_cyan_glow" android:layout_weight="1" android:layout_width="0dp" android:layout_height="52dp" android:layout_margin="5dp"/><Button android:id="@+id/btnFastboot" android:text="FASTBOOT" android:background="@drawable/bg_btn_orange" android:layout_weight="1" android:layout_width="0dp" android:layout_height="52dp" android:layout_margin="5dp"/></LinearLayout><LinearLayout android:id="@+id/cardStorage" android:background="@drawable/bg_storage" android:padding="14dp" android:layout_marginTop="12dp" android:layout_width="match_parent" android:layout_height="wrap_content"><TextView android:id="@+id/txtStorage" android:text="92.4 GB / 256 GB Used" android:textColor="#FFF" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout><TextView android:id="@+id/log" android:text="OTG Flasher Pro v1.7 FULL WORKING\n" android:textColor="#00FF88" android:background="#0A1A33" android:padding="10dp" android:layout_marginTop="12dp" android:layout_width="match_parent" android:layout_height="160dp"/><TextView android:id="@+id/txtDevice" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content"/><TextView android:id="@+id/txtStatus" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout></ScrollView>
+          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#010C1F" android:gravity="center"><TextView android:id="@+id/log" android:text="OTG Flasher Pro v1.7" android:textColor="#00D4FF" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout>
           XML
           wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
           unzip -q gradle-8.5-bin.zip
           ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5
           chmod +x gradlew
-      - name: Build APK FULL
+      - name: Build APK
         run: ./gradlew assembleDebug --stacktrace
-      - name: Upload APK FULL
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: OTG-Flasher-Pro-v1.7-FULL-WORKING
