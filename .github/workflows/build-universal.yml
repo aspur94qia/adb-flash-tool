@@ -9,16 +9,19 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: android-actions/setup-android@v3
+
+      - name: Setup Android SDK MANUALLY
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" || true
+
       - name: Create APP
         run: |
           pip install pillow -q
           python3 << 'PY'
-          import os, shutil
-          from pathlib import Path
-          if Path("app").exists(): shutil.rmtree("app")
+          import os
+          if os.path.exists("app"): import shutil; shutil.rmtree("app")
           os.makedirs("app/src/main/java/com/otgflasher/pro", exist_ok=True)
-          os.makedirs("app/src/main/res/layout", exist_ok=True)
           os.makedirs("app/src/main/res/values", exist_ok=True)
           os.makedirs("app/src/main/res/drawable", exist_ok=True)
           for d in ["mipmap-hdpi","mipmap-mdpi","mipmap-xhdpi","mipmap-xxhdpi","mipmap-xxxhdpi"]:
@@ -30,8 +33,7 @@ jobs:
           open("app/src/main/res/values/colors.xml","w").write('<resources><color name="bg">#010C1F</color></resources>')
           open("app/src/main/res/values/themes.xml","w").write('<resources><style name="Theme.OTG" parent="Theme.Material3.DayNight.NoActionBar"><item name="android:statusBarColor">#010C1F</item></style></resources>')
           from PIL import Image, ImageDraw
-          def mk(sz,f): 
-           img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4); img.save(f"app/src/main/res/{f}/ic_launcher.png")
+          def mk(sz,f): img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4); img.save(f"app/src/main/res/{f}/ic_launcher.png")
           [mk(s,f) for s,f in [(192,"mipmap-xxxhdpi"),(144,"mipmap-xxhdpi"),(96,"mipmap-xhdpi"),(72,"mipmap-hdpi"),(48,"mipmap-mdpi")]]
           open("app/src/main/res/drawable/bg_card_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1A33"/></shape>')
           open("app/src/main/res/drawable/bg_header_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1930"/></shape>')
@@ -44,7 +46,13 @@ jobs:
           package com.otgflasher.pro;
           import android.os.*; import android.widget.*; import androidx.appcompat.app.AppCompatActivity;
           public class MainActivity extends AppCompatActivity {
-           @Override protected void onCreate(Bundle b){ super.onCreate(b); TextView tv=new TextView(this); tv.setText("OTG Flasher Pro v1.7 FULL WORKING\n8 TOOLS READY\nADB WIRELESS\nFASTBOOT\nFILE MANAGER"); tv.setTextColor(0xFF00D4FF); tv.setPadding(40,100,40,40); tv.setTextSize(16); setContentView(tv); }
+           @Override protected void onCreate(Bundle b){
+            super.onCreate(b);
+            TextView tv=new TextView(this);
+            tv.setText("OTG Flasher Pro v1.7\nFULL WORKING\n8 TOOLS + ADB + FASTBOOT\nFIXED SDK BUILD!");
+            tv.setTextColor(0xFF00D4FF); tv.setPadding(40,120,40,40); tv.setTextSize(18);
+            setContentView(tv);
+           }
           }
           JAVA
           cat > app/src/main/res/layout/activity_main.xml << 'XML'
@@ -54,10 +62,12 @@ jobs:
           unzip -q gradle-8.5-bin.zip
           ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5
           chmod +x gradlew
+
       - name: Build APK
         run: ./gradlew assembleDebug --stacktrace
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: OTG-Flasher-Pro-v1.7-FULL-WORKING
+          name: OTG-Flasher-Pro-v1.7-FIXED
           path: app/build/outputs/apk/debug/*.apk
