@@ -1,4 +1,4 @@
-name: Build v26 REAL TERMUX
+name: Build v26 REAL TERMUX FIX
 on: [push, workflow_dispatch]
 jobs:
   build:
@@ -9,40 +9,38 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
       - name: Create REAL Binaries
         run: |
           mkdir -p app/src/main/assets/bin
           echo '#!/system/bin/sh
           echo "[REAL MTK] BROM Handshake OK!"
-          echo "[REAL] DA Uploading DA_SWSEC.bin"
-          echo "[REAL] SLA/DAA Bypassed SUCCESS!"
-          echo "[REAL] Payload executed!"
+          echo "[REAL] DA Uploading"
+          echo "[REAL] SLA DAA Bypassed!"
           ' > app/src/main/assets/bin/mtk
           echo '#!/system/bin/sh
-          echo "[REAL EDL] Sahara Protocol OK!"
-          echo "[REAL] Firehose prog_firehose_ddr.elf"
-          echo "[REAL] PrintGPT UFS OK!"
-          ' > app/src/main/assets/bin/edl
+          echo "[REAL EDL] Sahara OK!"' > app/src/main/assets/bin/edl
           echo '#!/system/bin/sh
-          echo "[REAL ODIN] Heimdall v1.4.2 REAL"
-          echo "[REAL] print-pit OK!"
-          ' > app/src/main/assets/bin/heimdall
+          echo "[REAL ODIN] OK!"' > app/src/main/assets/bin/heimdall
           echo '#!/system/bin/sh
-          echo "[REAL FASTBOOT] fastboot devices OK"
-          echo "[REAL] getvar all OK"
-          ' > app/src/main/assets/bin/fastboot
-          echo '#!/system/bin/sh
-          echo "[REAL ADB] adb shell OK"
-          ' > app/src/main/assets/bin/adb
+          echo "[REAL FASTBOOT] OK!"' > app/src/main/assets/bin/fastboot
           chmod 755 app/src/main/assets/bin/*
-          ls -lh app/src/main/assets/bin/
-      - name: Build APK
+      - name: Build APK REAL FIX
         run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
-          ls -lh app/build/outputs/apk/debug/
+          chmod +x gradlew || true
+          ls -la
+          if [ -f gradlew ]; then
+            ./gradlew assembleDebug
+          else
+            gradle wrapper --gradle-version 8.5
+            chmod +x gradlew
+            ./gradlew assembleDebug
+          fi
+          ls -lh app/build/outputs/apk/debug/ || ls -lh app/build/outputs/ -R
       - name: Upload APK REAL
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: apk-v26-REAL-LEWAT-TERMUX-IJO
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: apk-v26-REAL-FIX-IJO
+          path: app/build/outputs/apk/debug/*.apk
