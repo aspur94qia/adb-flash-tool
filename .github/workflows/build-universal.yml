@@ -231,14 +231,14 @@ jobs:
                           else if(cmd.startsWith("fastboot")) fullCmd = adbPath+" "+cmd;
                           else fullCmd = cmd;
                           File f = new File(adbPath);
-                          Process p;
+                          java.lang.Process p;
                           if(f.exists()){
                               p = Runtime.getRuntime().exec(fullCmd);
                           } else {
                               try{ p = Runtime.getRuntime().exec(new String[]{"su","-c",cmd}); }
                               catch(Exception e){ p = Runtime.getRuntime().exec(new String[]{"sh","-c",cmd}); }
                           }
-                          final Process proc = p;
+                          final java.lang.Process proc = p;
                           BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
                           BufferedReader be = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
                           String line;
