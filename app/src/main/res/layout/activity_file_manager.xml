@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#121212">
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="48dp" android:background="#000" android:gravity="center_vertical" android:padding="4dp">
+<Button android:id="@+id/btnBack" android:layout_width="48dp" android:layout_height="40dp" android:text="&lt;" android:textSize="16sp"/>
+<TextView android:id="@+id/txtPath" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="/sdcard/Download" android:textColor="#FF0" android:textSize="10sp" android:padding="6dp" android:singleLine="true" android:ellipsize="start"/>
+<Button android:id="@+id/btnUp" android:layout_width="60dp" android:layout_height="40dp" android:text="UP" android:textSize="9sp"/>
+<Button android:id="@+id/btnHome" android:layout_width="60dp" android:layout_height="40dp" android:text="HOME" android:textSize="8sp" android:layout_marginStart="2dp"/>
+</LinearLayout>
+<ListView android:id="@+id/listFiles" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="#1E1E1E" android:divider="#333" android:dividerHeight="1dp"/>
+<LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#222" android:padding="4dp">
+<TextView android:id="@+id/txtSelected" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="No file selected" android:textColor="#0F0" android:textSize="9sp" android:padding="2dp"/>
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
+<Button android:id="@+id/btnExtract" android:layout_width="0dp" android:layout_weight="1" android:layout_height="38dp" android:text="EXTRACT" android:textSize="8sp" android:backgroundTint="#4CAF50"/>
+<Button android:id="@+id/btnCreateZip" android:layout_width="0dp" android:layout_weight="1" android:layout_height="38dp" android:text="CREATE ZIP" android:textSize="7sp" android:backgroundTint="#FF9800" android:layout_marginStart="2dp"/>
+<Button android:id="@+id/btnCreateTar" android:layout_width="0dp" android:layout_weight="1" android:layout_height="38dp" android:text="TAR/GZ" android:textSize="7sp" android:layout_marginStart="2dp"/>
+</LinearLayout>
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
+<Button android:id="@+id/btnCopy" android:layout_width="0dp" android:layout_weight="1" android:layout_height="36dp" android:text="COPY" android:textSize="8sp"/>
+<Button android:id="@+id/btnCut" android:layout_width="0dp" android:layout_weight="1" android:layout_height="36dp" android:text="CUT" android:textSize="8sp" android:layout_marginStart="2dp"/>
+<Button android:id="@+id/btnDelete" android:layout_width="0dp" android:layout_weight="1" android:layout_height="36dp" android:text="DELETE" android:textSize="8sp" android:backgroundTint="#D32F2F" android:layout_marginStart="2dp"/>
+<Button android:id="@+id/btnRename" android:layout_width="0dp" android:layout_weight="1" android:layout_height="36dp" android:text="RENAME" android:textSize="7sp" android:layout_marginStart="2dp"/>
+</LinearLayout>
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
+<Button android:id="@+id/btnProps" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="PROPERTIES" android:textSize="7sp"/>
+<Button android:id="@+id/btnFlashHere" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="FLASH THIS" android:textSize="7sp" android:backgroundTint="#D32F2F" android:layout_marginStart="2dp"/>
+<Button android:id="@+id/btnPushPull" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="PUSH TO OTG" android:textSize="7sp" android:backgroundTint="#2196F3" android:layout_marginStart="2dp"/>
+</LinearLayout>
+</LinearLayout>
+</LinearLayout>
