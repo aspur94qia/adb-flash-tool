@@ -1,14 +1,7 @@
-package com.otgflasher.pro;
-import android.app.Activity;import android.os.Bundle;import android.widget.*;import java.io.*;
-public class OfpActivity extends Activity{
-TextView txtDetail,log;ProgressBar bar;
-@Override protected void onCreate(Bundle b){super.onCreate(b);setContentView(R.layout.activity_ofp);txtDetail=findViewById(R.id.txtDetail);log=findViewById(R.id.logView);bar=findViewById(R.id.progressBar);findViewById(R.id.btnBack).setOnClickListener(v->finish());
-findViewById(R.id.btn_EXTRACT_OFP_all).setOnClickListener(v->run("python3 /sdcard/Download/ofp_extractor.py /sdcard/Download/firmware.ofp /sdcard/Download/out/"));
-findViewById(R.id.btn_EXTRACT_OFP_super_only).setOnClickListener(v->run("python3 /sdcard/Download/ofp_extractor.py /sdcard/Download/firmware.ofp /sdcard/Download/out/ --only super"));
+package com.otgflasher.pro;import android.app.Activity;import android.os.Bundle;import android.widget.*;import java.io.*;public class OfpActivity extends Activity{TextView txtDetail,log;ProgressBar bar;@Override protected void onCreate(Bundle b){super.onCreate(b);setContentView(R.layout.activity_ofp);txtDetail=findViewById(R.id.txtDetail);log=findViewById(R.id.logView);bar=findViewById(R.id.progressBar);findViewById(R.id.btnBack).setOnClickListener(v->finish());findViewById(R.id.btn_EXTRACT_OFP_all).setOnClickListener(v->run("python3 /sdcard/Download/ofp_extractor.py /sdcard/Download/firmware.ofp /sdcard/Download/out/"));
+findViewById(R.id.btn_EXTRACT_super_only).setOnClickListener(v->run("python3 /sdcard/Download/ofp_extractor.py /sdcard/Download/firmware.ofp /sdcard/Download/out/ --only super"));
 findViewById(R.id.btn_DECRYPT_OFP).setOnClickListener(v->run("python3 /sdcard/Download/ofp_decrypt.py /sdcard/Download/firmware.ofp"));
-findViewById(R.id.btn_LIST_OFP).setOnClickListener(v->run("python3 /sdcard/Download/ofp_extractor.py --list /sdcard/Download/firmware.ofp"));
-findViewById(R.id.btn_FLASH_OFP).setOnClickListener(v->run("echo flashing ofp extracted via fastboot"));
-
-}
-void run(String c){bar.setProgress(5);log.append("\n> "+c+"\n");new Thread(()->{try{Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"});BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream()));String l;int pr=5;while((l=r.readLine())!=null){pr+=3;if(pr>95) pr=95;String ll=l;int pp=pr;runOnUiThread(()->{bar.setProgress(pp);txtDetail.setText(pp+"% "+ll);log.append(ll+"\n");});}p.waitFor();runOnUiThread(()->bar.setProgress(100));}catch(Exception e){runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n"));}}).start();}
-}
+findViewById(R.id.btn_LIST_OFP_files).setOnClickListener(v->run("python3 /sdcard/Download/ofp_extractor.py --list /sdcard/Download/firmware.ofp"));
+findViewById(R.id.btn_FLASH_OFP_extracted).setOnClickListener(v->run("fastboot flash super /sdcard/Download/out/super.img"));
+findViewById(R.id.btn_CONVERT_OFP_to_scatter).setOnClickListener(v->run("python3 /sdcard/Download/ofp_to_scatter.py /sdcard/Download/firmware.ofp"));
+}void run(String c){bar.setProgress(5);log.append("\n> "+c+"\n");new Thread(()->{try{Process p=Runtime.getRuntime().exec(new String[]{"sh","-c",c+" 2>&1"});BufferedReader r=new BufferedReader(new InputStreamReader(p.getInputStream()));String l;int pr=5;while((l=r.readLine())!=null){pr+=2;if(pr>95)pr=95;String ll=l;int pp=pr;runOnUiThread(()->{bar.setProgress(pp);txtDetail.setText(pp+"% "+ll);log.append(ll+"\n");});}p.waitFor();runOnUiThread(()->bar.setProgress(100));}catch(Exception e){runOnUiThread(()->log.append("ERR "+e.getMessage()+"\n"));}}).start();}}
