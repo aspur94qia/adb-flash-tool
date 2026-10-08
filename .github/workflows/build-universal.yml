@@ -9,12 +9,10 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-
       - name: Setup Android SDK MANUALLY
         run: |
           echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || true
           ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" || true
-
       - name: Create APP
         run: |
           pip install pillow -q
@@ -36,8 +34,24 @@ jobs:
           ROOT
           cat > app/build.gradle << 'APP'
           plugins { id 'com.android.application' }
-          android { compileSdk 34; namespace 'com.otgflasher.pro'; defaultConfig { applicationId 'com.otgflasher.pro'; minSdk 24; targetSdk 34; versionCode 170; versionName "1.7" } buildTypes { release { minifyEnabled false } } }
-          dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'com.google.android.material:material:1.11.0' }
+          android {
+              compileSdk 34
+              namespace 'com.otgflasher.pro'
+              defaultConfig {
+                  applicationId 'com.otgflasher.pro'
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 170
+                  versionName "1.7"
+              }
+              buildTypes {
+                  release { minifyEnabled false }
+              }
+          }
+          dependencies {
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'com.google.android.material:material:1.11.0'
+          }
           APP
           cat > app/src/main/res/values/colors.xml << 'C'
           <resources><color name="bg">#010C1F</color></resources>
@@ -64,7 +78,7 @@ jobs:
            @Override protected void onCreate(Bundle b){
             super.onCreate(b);
             TextView tv=new TextView(this);
-            tv.setText("OTG Flasher Pro v1.7\nFIXED BUILD SUCCESS!");
+            tv.setText("OTG Flasher Pro v1.7\nFIXED BUILD!");
             tv.setTextColor(0xFF00D4FF); tv.setPadding(40,120,40,40); tv.setTextSize(18);
             setContentView(tv);
            }
@@ -77,10 +91,8 @@ jobs:
           unzip -q gradle-8.5-bin.zip
           ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5
           chmod +x gradlew
-
       - name: Build APK
         run: ./gradlew assembleDebug --stacktrace
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
