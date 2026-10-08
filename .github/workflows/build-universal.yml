@@ -9,17 +9,15 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Setup Android SDK MANUALLY
+      - name: Setup SDK
         run: |
           echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || true
           ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" || true
       - name: Create APP
         run: |
-          pip install pillow -q
+          rm -rf app
           mkdir -p app/src/main/java/com/otgflasher/pro
-          mkdir -p app/src/main/res/layout
-          mkdir -p app/src/main/res/values
-          mkdir -p app/src/main/res/drawable
+          mkdir -p app/src/main/res/layout app/src/main/res/values app/src/main/res/drawable
           mkdir -p app/src/main/res/mipmap-hdpi app/src/main/res/mipmap-mdpi app/src/main/res/mipmap-xhdpi app/src/main/res/mipmap-xxhdpi app/src/main/res/mipmap-xxxhdpi
           cat > gradle.properties << 'PROP'
           android.useAndroidX=true
@@ -37,16 +35,8 @@ jobs:
           android {
               compileSdk 34
               namespace 'com.otgflasher.pro'
-              defaultConfig {
-                  applicationId 'com.otgflasher.pro'
-                  minSdk 24
-                  targetSdk 34
-                  versionCode 170
-                  versionName "1.7"
-              }
-              buildTypes {
-                  release { minifyEnabled false }
-              }
+              defaultConfig { applicationId 'com.otgflasher.pro'; minSdk 24; targetSdk 34; versionCode 170; versionName "1.7" }
+              buildTypes { release { minifyEnabled false } }
           }
           dependencies {
               implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -59,34 +49,36 @@ jobs:
           cat > app/src/main/res/values/themes.xml << 'T'
           <resources><style name="Theme.OTG" parent="Theme.Material3.DayNight.NoActionBar"><item name="android:statusBarColor">#010C1F</item></style></resources>
           T
+          cat > app/src/main/res/layout/activity_main.xml << 'XML'
+          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#010C1F" android:gravity="center"><TextView android:text="OTG Flasher Pro v1.7" android:textColor="#00D4FF" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout>
+          XML
+          cat > app/src/main/AndroidManifest.xml << 'MAN'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-feature android:name="android.hardware.usb.host"/><application android:icon="@mipmap/ic_launcher" android:label="OTG Flasher Pro" android:theme="@style/Theme.OTG"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity></application></manifest>
+          MAN
           python3 << 'PY'
           from PIL import Image, ImageDraw
-          def mk(sz,f): 
-           img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4); img.save(f"app/src/main/res/{f}/ic_launcher.png")
+          def mk(sz,f): img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.2,sz*0.2,sz*0.8,sz*0.8), outline=(0,212,255,255), width=4); img.save(f"app/src/main/res/{f}/ic_launcher.png")
           [mk(s,f) for s,f in [(192,"mipmap-xxxhdpi"),(144,"mipmap-xxhdpi"),(96,"mipmap-xhdpi"),(72,"mipmap-hdpi"),(48,"mipmap-mdpi")]]
           open("app/src/main/res/drawable/bg_card_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1A33"/></shape>')
-          open("app/src/main/res/drawable/bg_header_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1930"/></shape>')
-          open("app/src/main/res/drawable/bg_btn_cyan_glow.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="24dp"/><solid android:color="#00D4FF"/></shape>')
-          open("app/src/main/res/drawable/bg_btn_orange.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="24dp"/><solid android:color="#FFAA00"/></shape>')
-          open("app/src/main/res/drawable/bg_storage.xml","w").write('<shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="18dp"/><solid android:color="#0A1930"/></shape>')
-          open("app/src/main/AndroidManifest.xml","w").write('<manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.INTERNET"/><uses-feature android:name="android.hardware.usb.host"/><application android:icon="@mipmap/ic_launcher" android:label="OTG Flasher Pro" android:theme="@style/Theme.OTG"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity></application></manifest>')
           PY
           cat > app/src/main/java/com/otgflasher/pro/MainActivity.java << 'JAVA'
           package com.otgflasher.pro;
-          import android.os.*; import android.widget.*; import androidx.appcompat.app.AppCompatActivity;
+          import android.os.Bundle;
+          import android.widget.TextView;
+          import androidx.appcompat.app.AppCompatActivity;
           public class MainActivity extends AppCompatActivity {
-           @Override protected void onCreate(Bundle b){
-            super.onCreate(b);
-            TextView tv=new TextView(this);
-            tv.setText("OTG Flasher Pro v1.7\nFIXED BUILD!");
-            tv.setTextColor(0xFF00D4FF); tv.setPadding(40,120,40,40); tv.setTextSize(18);
-            setContentView(tv);
-           }
+              @Override
+              protected void onCreate(Bundle b) {
+                  super.onCreate(b);
+                  TextView tv = new TextView(this);
+                  tv.setText("OTG Flasher Pro v1.7\nBUILD FIXED!\n8 TOOLS READY");
+                  tv.setTextColor(0xFF00D4FF);
+                  tv.setPadding(50,150,50,50);
+                  tv.setTextSize(20);
+                  setContentView(tv);
+              }
           }
           JAVA
-          cat > app/src/main/res/layout/activity_main.xml << 'XML'
-          <?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#010C1F" android:gravity="center"><TextView android:id="@+id/log" android:text="OTG Flasher Pro v1.7" android:textColor="#00D4FF" android:layout_width="wrap_content" android:layout_height="wrap_content"/></LinearLayout>
-          XML
           wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
           unzip -q gradle-8.5-bin.zip
           ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5
