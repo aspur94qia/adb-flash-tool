@@ -9,14 +9,14 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Build
-        run: |
+      - run: |
+          python3 app_builder.py
           wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
           unzip -q gradle-8.5-bin.zip
-         ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5
+          ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5
           chmod +x gradlew
-         ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
-          name: OTG-Flasher-v2-FIXED
+          name: APK
           path: app/build/outputs/apk/debug/*.apk
