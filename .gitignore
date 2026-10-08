@@ -1,0 +1,7 @@
+app/src/main/assets/tools/
+*.zip
+*.elf
+*.bin
+*.img
+app/src/main/assets/bin/mtk
+app/src/main/assets/bin/edl

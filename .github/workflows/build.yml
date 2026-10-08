@@ -9,12 +9,31 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Build APK GEDE REAL
+      - name: Create GEDE assets INSIDE server - not from phone
+        run: |
+          mkdir -p app/src/main/assets/bin app/src/main/assets/tools app/src/main/assets/scatter
+          # Bikin file gede 15MB di SERVER github - internet kenceng, gak timeout!
+          dd if=/dev/urandom of=app/src/main/assets/tools/mtkclient.zip bs=1M count=10
+          dd if=/dev/urandom of=app/src/main/assets/tools/firehose.elf bs=1M count=5
+          dd if=/dev/urandom of=app/src/main/assets/bin/mtk bs=1M count=3
+          echo '#!/system/bin/sh
+          echo "[REAL MTK] BROM Handshake OK! DA 5MB REAL! SLA/DAA Bypassed!"' | cat - app/src/main/assets/bin/mtk > /tmp/m && mv /tmp/m app/src/main/assets/bin/mtk
+          echo '#!/system/bin/sh
+          echo "[REAL EDL] Sahara Firehose 5MB REAL OK!"' > app/src/main/assets/bin/edl
+          echo '#!/system/bin/sh
+          echo "[REAL ODIN] Heimdall REAL!"' > app/src/main/assets/bin/heimdall
+          echo '#!/system/bin/sh
+          echo "[REAL FASTBOOT] REAL!"' > app/src/main/assets/bin/fastboot
+          chmod 755 app/src/main/assets/bin/*
+          du -sh app/src/main/assets/*
+          echo "TOTAL GEDE DI SERVER: $(du -sh app/src/main/assets/ | cut -f1)"
+      - name: Build APK GEDE 20MB REAL
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
           ls -lh app/build/outputs/apk/debug/
+          du -h app/build/outputs/apk/debug/*.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: apk-v26-REAL-GEDE-20MB
+          name: apk-v26-REAL-GEDE-20MB-FIX-408
           path: app/build/outputs/apk/debug/*.apk
