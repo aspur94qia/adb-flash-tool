@@ -13,20 +13,254 @@ jobs:
         run: |
           echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || true
           ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" || true
-      - name: Create APP
+      - name: Create APP REAL ADB
         run: |
           rm -rf app
           mkdir -p app/src/main/java/com/otgflasher/pro
-          echo "android.useAndroidX=true" > gradle.properties
-          echo "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } } dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral() } } include ':app'" > settings.gradle
-          echo "plugins { id 'com.android.application' version '8.2.2' apply false }" > build.gradle
-          python3 app_builder.py
+          mkdir -p app/src/main/res/layout app/src/main/res/values app/src/main/res/drawable
+          mkdir -p app/src/main/res/mipmap-hdpi app/src/main/res/mipmap-mdpi app/src/main/res/mipmap-xhdpi app/src/main/res/mipmap-xxhdpi app/src/main/res/mipmap-xxxhdpi
+          mkdir -p app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/armeabi-v7a
+          cat > gradle.properties << 'PROP'
+          android.useAndroidX=true
+          PROP
+          cat > settings.gradle << 'SET'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral() } }
+          include ':app'
+          SET
+          cat > build.gradle << 'ROOT'
+          plugins { id 'com.android.application' version '8.2.2' apply false }
+          ROOT
+          cat > app/build.gradle << 'APP'
+          plugins { id 'com.android.application' }
+          android {
+              compileSdk 34
+              namespace 'com.otgflasher.pro'
+              defaultConfig { applicationId 'com.otgflasher.pro'; minSdk 26; targetSdk 34; versionCode 180; versionName "1.8 REAL" }
+              buildTypes { release { minifyEnabled false } }
+              packaging { jniLibs { useLegacyPackaging true } }
+          }
+          dependencies {
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'com.google.android.material:material:1.11.0'
+          }
+          APP
+          cat > app/src/main/res/values/colors.xml << 'C'
+          <resources><color name="bg">#010C1F</color></resources>
+          C
+          cat > app/src/main/res/values/themes.xml << 'T'
+          <resources><style name="Theme.OTG" parent="Theme.Material3.DayNight.NoActionBar"><item name="android:statusBarColor">#010C1F</item></style></resources>
+          T
+          cat > app/src/main/res/drawable/bg_card.xml << 'D'
+          <shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="20dp"/><solid android:color="#0D1E3A"/><stroke android:width="1dp" android:color="#00D4FF"/></shape>
+          D
+          cat > app/src/main/res/drawable/bg_btn_cyan.xml << 'D'
+          <shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="20dp"/><solid android:color="#00D4FF"/></shape>
+          D
+          cat > app/src/main/res/drawable/bg_btn_orange.xml << 'D'
+          <shape xmlns:android="http://schemas.android.com/apk/res/android"><corners android:radius="20dp"/><solid android:color="#FFAA00"/></shape>
+          D
+          cat > app/src/main/AndroidManifest.xml << 'MAN'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+          <uses-permission android:name="android.permission.INTERNET"/>
+          <uses-feature android:name="android.hardware.usb.host" android:required="true"/>
+          <application android:icon="@mipmap/ic_launcher" android:label="OTG Flasher Pro" android:theme="@style/Theme.OTG" android:requestLegacyExternalStorage="true">
+          <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize">
+          <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+          <intent-filter><action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/></intent-filter>
+          </activity>
+          </application>
+          </manifest>
+          MAN
           pip install pillow -q
-          python3 -c "from PIL import Image; [Image.new('RGBA',(s,s),(1,12,31,255)).save(f'app/src/main/res/{d}/ic_launcher.png') for s,d in [(192,'mipmap-xxxhdpi'),(144,'mipmap-xxhdpi'),(96,'mipmap-xhdpi'),(72,'mipmap-hdpi'),(48,'mipmap-mdpi')]]"
-          wget -q https://github.com/tytydraco/adb/releases/download/1.0.0/adb-aarch64 -O app/src/main/jniLibs/arm64-v8a/libadb.so || touch app/src/main/jniLibs/arm64-v8a/libadb.so
-          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip; unzip -q gradle-8.5-bin.zip;./gradle-8.5/bin/gradle wrapper --gradle-version 8.5; chmod +x gradlew
-      - name: Build APK
-        run:./gradlew assembleDebug --stacktrace
+          python3 << 'PY'
+          from PIL import Image, ImageDraw
+          def mk(sz,f):
+           img=Image.new('RGBA',(sz,sz),(1,12,31,255)); d=ImageDraw.Draw(img); d.ellipse((sz*0.15,sz*0.15,sz*0.85,sz*0.85), outline=(0,212,255,255), width=5); img.save(f"app/src/main/res/{f}/ic_launcher.png")
+          [mk(s,f) for s,f in [(192,"mipmap-xxxhdpi"),(144,"mipmap-xxhdpi"),(96,"mipmap-xhdpi"),(72,"mipmap-hdpi"),(48,"mipmap-mdpi")]]
+          PY
+          # Download ADB arm64 static binary and pack as libadb.so
+          wget -q https://github.com/tytydraco/adb/releases/download/1.0.0/adb-aarch64 -O app/src/main/jniLibs/arm64-v8a/libadb.so || echo "fallback"
+          chmod +x app/src/main/jniLibs/arm64-v8a/libadb.so || true
+          cp app/src/main/jniLibs/arm64-v8a/libadb.so app/src/main/jniLibs/armeabi-v7a/libadb.so || true
+          cat > app/src/main/res/layout/activity_main.xml << 'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#010C1F" android:orientation="vertical">
+              <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
+              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
+                  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="⚡ OTG Flasher Pro v1.8 REAL ADB" android:textColor="#00D4FF" android:textSize="18sp" android:textStyle="bold" android:gravity="center" android:padding="14dp" android:background="@drawable/bg_card"/>
+                  <TextView android:id="@+id/tvUsb" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="USB: Checking OTG..." android:textColor="#FFAA00" android:padding="8dp" android:layout_marginTop="8dp"/>
+                  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+                      <Button android:id="@+id/btnAdb" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:text="ADB DEVICES" android:background="@drawable/bg_btn_cyan" android:textColor="#000" android:layout_marginEnd="6dp"/>
+                      <Button android:id="@+id/btnFastboot" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:text="FASTBOOT" android:background="@drawable/bg_btn_orange" android:textColor="#000"/>
+                  </LinearLayout>
+                  <TextView android:id="@+id/tvPath" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="No file selected" android:textColor="#888" android:padding="8dp" android:background="@drawable/bg_card" android:layout_marginTop="8dp"/>
+                  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="8dp">
+                      <Button android:id="@+id/btnPick" android:layout_width="match_parent" android:layout_height="44dp" android:text="📁 PICK IMG FILE" android:background="@drawable/bg_card" android:textColor="#00D4FF"/>
+                      <Button android:id="@+id/btnFlashBoot" android:layout_width="match_parent" android:layout_height="48dp" android:text="🔥 FLASH BOOT" android:background="@drawable/bg_btn_cyan" android:textColor="#000" android:layout_marginTop="6dp"/>
+                      <Button android:id="@+id/btnFlashRecovery" android:layout_width="match_parent" android:layout_height="48dp" android:text="🛡️ FLASH RECOVERY" android:background="@drawable/bg_btn_cyan" android:textColor="#000" android:layout_marginTop="6dp"/>
+                      <Button android:id="@+id/btnFlashSystem" android:layout_width="match_parent" android:layout_height="48dp" android:text="📦 FLASH SYSTEM" android:background="@drawable/bg_btn_cyan" android:textColor="#000" android:layout_marginTop="6dp"/>
+                      <Button android:id="@+id/btnFlashVbmeta" android:layout_width="match_parent" android:layout_height="48dp" android:text="🔓 FLASH VBMETA (DISABLE)" android:background="@drawable/bg_btn_orange" android:textColor="#000" android:layout_marginTop="6dp"/>
+                      <Button android:id="@+id/btnUnlock" android:layout_width="match_parent" android:layout_height="48dp" android:text="🔑 UNLOCK BOOTLOADER" android:background="@drawable/bg_btn_orange" android:textColor="#000" android:layout_marginTop="6dp"/>
+                      <Button android:id="@+id/btnWipe" android:layout_width="match_parent" android:layout_height="48dp" android:text="🧹 WIPE DATA / FORMAT" android:background="@drawable/bg_btn_orange" android:textColor="#000" android:layout_marginTop="6dp"/>
+                      <Button android:id="@+id/btnBackup" android:layout_width="match_parent" android:layout_height="48dp" android:text="💾 BACKUP BOOT" android:background="@drawable/bg_card" android:textColor="#00D4FF" android:layout_marginTop="6dp"/>
+                      <Button android:id="@+id/btnSideload" android:layout_width="match_parent" android:layout_height="48dp" android:text="⬇️ ADB SIDELOAD ZIP" android:background="@drawable/bg_card" android:textColor="#00D4FF" android:layout_marginTop="6dp"/>
+                      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="6dp">
+                          <Button android:id="@+id/btnReboot" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:text="REBOOT" android:background="@drawable/bg_btn_orange" android:textColor="#000" android:layout_marginEnd="3dp"/>
+                          <Button android:id="@+id/btnRebootBL" android:layout_width="0dp" android:layout_height="48dp" android:layout_weight="1" android:text="REBOOT BL" android:background="@drawable/bg_btn_orange" android:textColor="#000" android:layout_marginStart="3dp"/>
+                      </LinearLayout>
+                  </LinearLayout>
+                  <TextView android:id="@+id/tvLog" android:layout_width="match_parent" android:layout_height="350dp" android:layout_marginTop="10dp" android:background="#000" android:padding="10dp" android:text="> OTG Flasher Pro v1.8 REAL ADB ENGINE\n> Ready...\n> Menunggu OTG Device...\n" android:textColor="#00FF88" android:fontFamily="monospace" android:textSize="11sp" android:scrollbars="vertical"/>
+              </LinearLayout>
+              </ScrollView>
+          </LinearLayout>
+          XML
+          cat > app/src/main/java/com/otgflasher/pro/MainActivity.java << 'JAVA'
+          package com.otgflasher.pro;
+          import android.app.PendingIntent;
+          import android.content.*;
+          import android.hardware.usb.*;
+          import android.net.Uri;
+          import android.os.*;
+          import android.widget.*;
+          import androidx.appcompat.app.AppCompatActivity;
+          import java.io.*;
+          import java.util.HashMap;
+          public class MainActivity extends AppCompatActivity {
+              TextView tvLog, tvUsb, tvPath;
+              String selectedPath = "";
+              String adbPath = "";
+              static final String ACTION_USB = "com.otgflasher.pro.USB_PERMISSION";
+              UsbManager usbManager;
+              @Override protected void onCreate(Bundle b){
+                  super.onCreate(b);
+                  setContentView(R.layout.activity_main);
+                  tvLog = findViewById(R.id.tvLog);
+                  tvUsb = findViewById(R.id.tvUsb);
+                  tvPath = findViewById(R.id.tvPath);
+                  usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+                  adbPath = getApplicationInfo().nativeLibraryDir + "/libadb.so";
+                  log("> Native ADB Path: " + adbPath);
+                  findViewById(R.id.btnPick).setOnClickListener(v -> pickFile());
+                  findViewById(R.id.btnAdb).setOnClickListener(v -> execCmd("adb_devices"));
+                  findViewById(R.id.btnFastboot).setOnClickListener(v -> execCmd("fastboot_devices"));
+                  findViewById(R.id.btnFlashBoot).setOnClickListener(v -> flash("boot"));
+                  findViewById(R.id.btnFlashRecovery).setOnClickListener(v -> flash("recovery"));
+                  findViewById(R.id.btnFlashSystem).setOnClickListener(v -> flash("system"));
+                  findViewById(R.id.btnFlashVbmeta).setOnClickListener(v -> flashVbmeta());
+                  findViewById(R.id.btnUnlock).setOnClickListener(v -> execReal("fastboot flashing unlock"));
+                  findViewById(R.id.btnWipe).setOnClickListener(v -> execReal("fastboot -w"));
+                  findViewById(R.id.btnBackup).setOnClickListener(v -> execReal("adb pull /dev/block/by-name/boot /sdcard/boot_backup.img"));
+                  findViewById(R.id.btnSideload).setOnClickListener(v -> sideload());
+                  findViewById(R.id.btnReboot).setOnClickListener(v -> execReal("adb reboot"));
+                  findViewById(R.id.btnRebootBL).setOnClickListener(v -> execReal("adb reboot bootloader"));
+                  if (Build.VERSION.SDK_INT >= 33) {
+                      registerReceiver(usbReceiver, new IntentFilter(ACTION_USB), Context.RECEIVER_NOT_EXPORTED);
+                      registerReceiver(usbReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED), Context.RECEIVER_EXPORTED);
+                  } else {
+                      registerReceiver(usbReceiver, new IntentFilter(ACTION_USB));
+                      registerReceiver(usbReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED));
+                  }
+                  checkUsb();
+              }
+              @Override protected void onDestroy(){
+                  super.onDestroy();
+                  try { unregisterReceiver(usbReceiver); } catch(Exception e){}
+              }
+              void checkUsb(){
+                  HashMap<String, UsbDevice> list = usbManager.getDeviceList();
+                  if(list.isEmpty()){ tvUsb.setText("USB: No OTG Device"); log("> USB: No device, colok kabel OTG bos!"); }
+                  else { for(UsbDevice d: list.values()){ tvUsb.setText("USB: Found "+d.getDeviceName()+" VID:"+d.getVendorId()); log("> USB Device: "+d.getProductName()+" VID:"+d.getVendorId()+" PID:"+d.getProductId()); requestPerm(d); } }
+              }
+              void requestPerm(UsbDevice dev){
+                  Intent in = new Intent(ACTION_USB);
+                  in.setPackage(getPackageName());
+                  PendingIntent pi = PendingIntent.getBroadcast(this,0,in, PendingIntent.FLAG_MUTABLE);
+                  usbManager.requestPermission(dev, pi);
+              }
+              BroadcastReceiver usbReceiver = new BroadcastReceiver(){
+                  public void onReceive(Context c, Intent i){
+                      if(ACTION_USB.equals(i.getAction())){
+                          UsbDevice dev = i.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                          if(i.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED,false) && dev != null){
+                              tvUsb.setText("USB: Permission OK - "+dev.getDeviceName()); log("> USB Permission GRANTED!");
+                          } else { tvUsb.setText("USB: Permission Denied"); log("> USB Permission DENIED!"); }
+                      } else if(UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(i.getAction())){ checkUsb(); }
+                  }
+              };
+              void pickFile(){
+                  Intent intent = new Intent(Intent.ACTION_GET_CONTENT); intent.setType("*/*"); startActivityForResult(intent, 99);
+              }
+              @Override protected void onActivityResult(int req,int res,Intent data){
+                  super.onActivityResult(req,res,data);
+                  if(req==99 && res==RESULT_OK && data!=null){
+                      Uri uri = data.getData();
+                      selectedPath = getRealPath(uri);
+                      if(selectedPath==null) selectedPath = uri.toString();
+                      tvPath.setText("Selected: "+selectedPath);
+                      log("> File picked: "+selectedPath);
+                  }
+              }
+              String getRealPath(Uri uri){
+                  try{ InputStream is = getContentResolver().openInputStream(uri); File out = new File(getCacheDir(),"temp.img"); FileOutputStream fos = new FileOutputStream(out); byte[] buf=new byte[8192]; int len; while((len=is.read(buf))>0) fos.write(buf,0,len); fos.close(); is.close(); return out.getAbsolutePath(); } catch(Exception e){ return null; }
+              }
+              void flash(String part){
+                  if(selectedPath.isEmpty()){ log("> ERROR: Pick .img file dulu bos!"); Toast.makeText(this,"Pick file dulu!",Toast.LENGTH_SHORT).show(); return; }
+                  execReal("fastboot flash "+part+" "+selectedPath);
+              }
+              void flashVbmeta(){
+                  if(selectedPath.isEmpty()){ log("> ERROR: Pick vbmeta.img dulu bos!"); return; }
+                  execReal("fastboot flash vbmeta --disable-verity --disable-verification "+selectedPath);
+              }
+              void sideload(){
+                  if(selectedPath.isEmpty()){ log("> Pick zip file dulu buat sideload"); return; }
+                  execReal("adb sideload "+selectedPath);
+              }
+              void execCmd(String type){
+                  if(type.equals("adb_devices")){
+                      log("> Executing: adb devices");
+                      execReal("adb devices");
+                  } else { log("> Executing: fastboot devices"); execReal("fastboot devices"); }
+              }
+              void execReal(String cmd){
+                  log("> $ "+cmd);
+                  new Thread(() -> {
+                      try{
+                          String fullCmd;
+                          if(cmd.startsWith("adb")) fullCmd = adbPath+" "+cmd.substring(4);
+                          else if(cmd.startsWith("fastboot")) fullCmd = adbPath+" "+cmd;
+                          else fullCmd = cmd;
+                          File f = new File(adbPath);
+                          Process p;
+                          if(f.exists()){
+                              p = Runtime.getRuntime().exec(fullCmd);
+                          } else {
+                              try{ p = Runtime.getRuntime().exec(new String[]{"su","-c",cmd}); }
+                              catch(Exception e){ p = Runtime.getRuntime().exec(new String[]{"sh","-c",cmd}); }
+                          }
+                          final Process proc = p;
+                          BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+                          BufferedReader be = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+                          String line;
+                          while((line=br.readLine())!=null){ final String l=line; runOnUiThread(() -> log(l)); }
+                          while((line=be.readLine())!=null){ final String l=line; runOnUiThread(() -> log("ERR: "+l)); }
+                          final int code = proc.waitFor();
+                          runOnUiThread(() -> log("> Exit code: "+code));
+                      } catch(Exception e){ final String msg=e.getMessage(); runOnUiThread(() -> log("> EXCEPTION: "+msg)); }
+                  }).start();
+              }
+              void log(String s){
+                  tvLog.append("\n"+s);
+                  tvLog.post(() -> { if(tvLog.getLayout()!=null){ int amt = tvLog.getLayout().getLineTop(tvLog.getLineCount()) - tvLog.getHeight(); tvLog.scrollTo(0, Math.max(amt,0)); } });
+              }
+          }
+          JAVA
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
+          unzip -q gradle-8.5-bin.zip
+          ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5
+          chmod +x gradlew
+      - name: Build APK REAL
+        run: ./gradlew assembleDebug --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
