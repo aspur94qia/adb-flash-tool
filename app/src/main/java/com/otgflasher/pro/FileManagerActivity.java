@@ -8,7 +8,7 @@ public class FileManagerActivity extends Activity {
         findViewById(R.id.btnBack).setOnClickListener(v->finish());
         findViewById(R.id.btnUp).setOnClickListener(v->{ if(cur.getParentFile()!=null){ cur=cur.getParentFile(); list(); }});
         findViewById(R.id.btnExtract).setOnClickListener(v->doCmd("cd '"+cur.getAbsolutePath()+"' && unzip -o '"+(selected!=null?selected.getAbsolutePath():"")+"' 2>&1"));
-        findViewById(R.id.btnCreateZip).setOnClickListener(v->doCmd("cd '"+cur.getAbsolutePath()+"' && zip -r '"+(selected!=null?selected.getName():"archive")+".zip' '"+(selected!=null?selected.getName():".")+"' 2>&1"));
+        findViewById(R.id.btnCreateZip).setOnClickListener(v->doCmd("cd '"+cur.getAbsolutePath()+"' && zip -r archive.zip '"+(selected!=null?selected.getName():".")+"' 2>&1"));
         findViewById(R.id.btnDelete).setOnClickListener(v->{ if(selected!=null){ selected.delete(); list(); }});
         listFiles.setOnItemClickListener((a,vw,pos,id)->{ File f=files.get(pos); if(f.isDirectory()){ cur=f; list(); } else { selected=f; txtSelected.setText("SELECTED: "+f.getName()); }});
         list();
