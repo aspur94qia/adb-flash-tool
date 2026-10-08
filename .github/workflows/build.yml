@@ -9,13 +9,8 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - run: |
-          python3 app_builder.py
-          pip install pillow -q
-          python3 -c "from PIL import Image; [Image.new('RGBA',(s,s),(0,212,255,255)).save('app/src/main/res/'+d+'/ic_launcher.png') for s,d in [(192,'mipmap-xxxhdpi'),(144,'mipmap-xxhdpi'),(96,'mipmap-xhdpi'),(72,'mipmap-hdpi'),(48,'mipmap-mdpi')]]"
-          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip; unzip -q gradle-8.5-bin.zip;./gradle-8.5/bin/gradle wrapper --gradle-version 8.5; chmod +x gradlew
-        ./gradlew assembleDebug --stacktrace
+      - run: python3 app_builder.py && ./gradlew assembleDebug --stacktrace || (wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip; unzip -q gradle-8.5-bin.zip; ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5; chmod +x gradlew; ./gradlew assembleDebug)
       - uses: actions/upload-artifact@v4
         with:
-          name: OTG-Flasher-v2
+          name: APK
           path: app/build/outputs/apk/debug/*.apk
