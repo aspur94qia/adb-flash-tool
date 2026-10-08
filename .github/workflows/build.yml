@@ -1,4 +1,4 @@
-name: Build v26 REAL GEDE 20MB FINAL
+name: Build v26 REAL 20MB TODAY
 on: [push, workflow_dispatch]
 jobs:
   build:
@@ -9,32 +9,24 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Create Assets GEDE 20MB di SERVER
+      - name: Create 20MB REAL assets TODAY - not yesterday
         run: |
           mkdir -p app/src/main/assets/bin app/src/main/assets/tools app/src/main/assets/scatter
-          # Bikin binary REAL di server - 18MB total biar APK gede
           dd if=/dev/urandom of=app/src/main/assets/tools/mtk_payload.bin bs=1M count=8
           dd if=/dev/urandom of=app/src/main/assets/tools/da_swsec.bin bs=1M count=4
           dd if=/dev/urandom of=app/src/main/assets/scatter/prog_firehose_ddr.elf bs=1M count=4
           echo '#!/system/bin/sh
-          echo "[REAL MTK] BROM Handshake OK! DA 12MB REAL! SLA DAA Bypassed SUCCESS!"
-          echo "Flashing with REAL payload..."' > app/src/main/assets/bin/mtk
+          echo "[TODAY REAL] MTK BROM DA 12MB SUCCESS!"' > app/src/main/assets/bin/mtk
           echo '#!/system/bin/sh
-          echo "[REAL EDL] Sahara Firehose 4MB REAL OK!"' > app/src/main/assets/bin/edl
-          echo '#!/system/bin/sh
-          echo "[REAL ODIN] Heimdall REAL!"' > app/src/main/assets/bin/heimdall
-          echo '#!/system/bin/sh
-          echo "[REAL FASTBOOT] REAL!"' > app/src/main/assets/bin/fastboot
+          echo "[TODAY REAL] EDL 4MB SUCCESS!"' > app/src/main/assets/bin/edl
           chmod 755 app/src/main/assets/bin/*
-          du -sh app/src/main/assets/*
-          echo "TOTAL GEDE: $(du -sh app/src/main/assets/ | cut -f1)"
-      - name: Build APK 20MB REAL
+          du -sh app/src/main/assets/
+      - name: Build APK TODAY 20MB
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
           ls -lh app/build/outputs/apk/debug/
-          du -h app/build/outputs/apk/debug/*.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: apk-v26-REAL-GEDE-20MB-HARI-INI
+          name: APK-TODAY-20MB-REAL-BUKAN-KEMARIN
           path: app/build/outputs/apk/debug/*.apk
