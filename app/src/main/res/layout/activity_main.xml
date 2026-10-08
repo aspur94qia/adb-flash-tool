@@ -1,6 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?><ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent"><LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="16dp"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="OTG FLASHER PRO v2" android:textSize="22sp" android:textStyle="bold" android:gravity="center"/><TextView android:id="@+id/fileTxt" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Belum ada file" android:padding="8dp" android:background="#222" android:textColor="#0F0" android:layout_marginTop="12dp"/><LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content"><Button android:id="@+id/btnPick" android:layout_width="0dp" android:layout_weight="1" android:layout_height="60dp" android:text="PILIH FILE IMG" android:layout_margin="4dp"/><Button android:id="@+id/btnAdb" android:layout_width="0dp" android:layout_weight="1" android:layout_height="60dp" android:text="CEK ADB" android:layout_margin="4dp"/></LinearLayout><Button android:id="@+id/btnFlash" android:layout_width="match_parent" android:layout_height="70dp" android:text="FLASH SEKARANG" android:textSize="18sp" android:backgroundTint="#FF0000" android:layout_marginTop="8dp"/><TextView android:id="@+id/logView" android:layout_width="match_parent" android:layout_height="400dp" android:text="LOG:
-- Pilih file boot.img
-- Colok OTG
-- Klik FLASH
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#F5F5F5">
+<LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="12dp">
 
-Butuh ROOT" android:background="#111" android:textColor="#0F0" android:padding="8dp" android:fontFamily="monospace" android:layout_marginTop="8dp"/></LinearLayout></ScrollView>
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="OTG FLASHER PRO v3 - FULL ADB/FASTBOOT" android:textSize="14sp" android:textStyle="bold" android:gravity="center" android:padding="8dp" android:background="#212121" android:textColor="#00FF00"/>
+
+<TextView android:id="@+id/statusTxt" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="STATUS: Belum colok OTG" android:padding="8dp" android:background="#333" android:textColor="#0F0" android:layout_marginTop="8dp" android:fontFamily="monospace" android:textSize="12sp"/>
+
+<TextView android:id="@+id/fileTxt" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="File: Belum ada" android:padding="8dp" android:background="#222" android:textColor="#FF0" android:layout_marginTop="6dp"/>
+
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp">
+<Button android:id="@+id/btnPick" android:layout_width="0dp" android:layout_weight="1" android:layout_height="50dp" android:text="PILIH FILE IMG" android:textSize="11sp"/>
+<Button android:id="@+id/btnDevices" android:layout_width="0dp" android:layout_weight="1" android:layout_height="50dp" android:text="CEK DEVICE" android:textSize="11sp" android:layout_marginStart="4dp"/>
+</LinearLayout>
+
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--- REBOOT MENU ---" android:textSize="12sp" android:textStyle="bold" android:gravity="center" android:layout_marginTop="12dp"/>
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+<Button android:id="@+id/btnRebootBL" android:layout_width="0dp" android:layout_weight="1" android:layout_height="45dp" android:text="REBOOT BOOTLOADER" android:textSize="9sp"/>
+<Button android:id="@+id/btnRebootRec" android:layout_width="0dp" android:layout_weight="1" android:layout_height="45dp" android:text="REBOOT RECOVERY" android:textSize="9sp" android:layout_marginStart="4dp"/>
+<Button android:id="@+id/btnRebootSys" android:layout_width="0dp" android:layout_weight="1" android:layout_height="45dp" android:text="REBOOT SYSTEM" android:textSize="9sp" android:layout_marginStart="4dp"/>
+</LinearLayout>
+
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--- FLASH PARTITION ---" android:textSize="12sp" android:textStyle="bold" android:gravity="center" android:layout_marginTop="12dp"/>
+<Spinner android:id="@+id/spinPart" android:layout_width="match_parent" android:layout_height="50dp" android:background="#FFF"/>
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
+<Button android:id="@+id/btnFlash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="60dp" android:text="FLASH PARTITION" android:backgroundTint="#D32F2F" android:textSize="12sp"/>
+<Button android:id="@+id/btnFlashAll" android:layout_width="0dp" android:layout_weight="1" android:layout_height="60dp" android:text="FLASH BATCH" android:backgroundTint="#FF9800" android:textSize="12sp" android:layout_marginStart="4dp"/>
+</LinearLayout>
+
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--- WIPE / ERASE / UNLOCK ---" android:textSize="12sp" android:textStyle="bold" android:gravity="center" android:layout_marginTop="12dp"/>
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+<Button android:id="@+id/btnEraseData" android:layout_width="0dp" android:layout_weight="1" android:layout_height="45dp" android:text="ERASE DATA" android:textSize="9sp"/>
+<Button android:id="@+id/btnEraseCache" android:layout_width="0dp" android:layout_weight="1" android:layout_height="45dp" android:text="ERASE CACHE" android:textSize="9sp" android:layout_marginStart="4dp"/>
+<Button android:id="@+id/btnFormat" android:layout_width="0dp" android:layout_weight="1" android:layout_height="45dp" android:text="FORMAT DATA" android:textSize="9sp" android:layout_marginStart="4dp"/>
+</LinearLayout>
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
+<Button android:id="@+id/btnUnlock" android:layout_width="0dp" android:layout_weight="1" android:layout_height="45dp" android:text="UNLOCK BL" android:textSize="9sp"/>
+<Button android:id="@+id/btnLock" android:layout_width="0dp" android:layout_weight="1" android:layout_height="45dp" android:text="LOCK BL" android:textSize="9sp" android:layout_marginStart="4dp"/>
+<Button android:id="@+id/btnDisableVbmeta" android:layout_width="0dp" android:layout_weight="1" android:layout_height="45dp" android:text="DISABLE VBMETA" android:textSize="8sp" android:layout_marginStart="4dp"/>
+</LinearLayout>
+
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="--- MANUAL COMMAND ---" android:textSize="12sp" android:textStyle="bold" android:gravity="center" android:layout_marginTop="12dp"/>
+<EditText android:id="@+id/editCmd" android:layout_width="match_parent" android:layout_height="50dp" android:hint="contoh: fastboot flash boot boot.img" android:background="#FFF" android:padding="8dp"/>
+<Button android:id="@+id/btnRunCmd" android:layout_width="match_parent" android:layout_height="50dp" android:text="JALANKAN COMMAND" android:backgroundTint="#212121" android:layout_marginTop="4dp"/>
+
+<TextView android:id="@+id/logView" android:layout_width="match_parent" android:layout_height="500dp" android:text="LOG READY:
+> Colok OTG ke HP target
+> Klik CEK DEVICE
+> Pilih file img
+> Pilih partition &amp; FLASH
+
+FITUR:
+- Flash boot/recovery/system/vendor/vbmeta/super
+- Erase/Format
+- Unlock Bootloader
+- Reboot menu
+- Manual fastboot/adb command
+" android:background="#111" android:textColor="#0F0" android:padding="8dp" android:fontFamily="monospace" android:textSize="11sp" android:layout_marginTop="8dp"/>
+
+</LinearLayout>
+</ScrollView>
