@@ -7,20 +7,17 @@ open("gradle.properties","w").write("android.useAndroidX=true\n")
 open("app/build.gradle","w").write("plugins{ id 'com.android.application' }\nandroid{ compileSdk 34; namespace 'com.otgflasher.pro'; defaultConfig{ applicationId 'com.otgflasher.pro'; minSdk 26; targetSdk 34; versionCode 7; versionName '7.0' } }\ndependencies{ implementation 'androidx.appcompat:appcompat:1.6.1' }\n")
 open("app/src/main/res/values/strings.xml","w").write('<resources><string name="app_name">OTG Flasher Ultimate</string></resources>')
 open("app/src/main/res/values/themes.xml","w").write('<resources><style name="Theme.OTGFlasher" parent="android:Theme.Material.Light.NoActionBar"/></resources>')
-open("app/src/main/AndroidManifest.xml","w").write('<manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/><uses-feature android:name="android.hardware.usb.host"/><application android:theme="@style/Theme.OTGFlasher" android:label="OTG Flasher Ultimate v7" android:requestLegacyExternalStorage="true"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity></application></manifest>')
+open("app/src/main/AndroidManifest.xml","w").write('<manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/><uses-feature android:name="android.hardware.usb.host"/><application android:theme="@style/Theme.OTGFlasher" android:label="OTG Flasher Ultimate v7 FIX" android:requestLegacyExternalStorage="true"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity></application></manifest>')
 
 open("app/src/main/res/layout/activity_main.xml","w").write('''<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#0A0A0A">
 <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="5dp">
-
-<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="OTG FLASHER v7 LEGEND - ALL CHIPSET + ALL TOOLS - NO ROOT" android:textSize="9sp" android:textStyle="bold" android:gravity="center" android:padding="6dp" android:background="#000" android:textColor="#0F0"/>
-
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="OTG FLASHER v7 FIX - ALL CHIPSET - NO ROOT" android:textSize="9sp" android:textStyle="bold" android:gravity="center" android:padding="6dp" android:background="#000" android:textColor="#0F0"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
 <Button android:id="@+id/btnUsb" android:layout_width="0dp" android:layout_weight="1" android:layout_height="40dp" android:text="CONNECT OTG" android:backgroundTint="#4CAF50" android:textSize="8sp"/>
 <Button android:id="@+id/btnDevices" android:layout_width="0dp" android:layout_weight="1" android:layout_height="40dp" android:text="DETECT MODE" android:textSize="8sp" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnLog" android:layout_width="0dp" android:layout_weight="1" android:layout_height="40dp" android:text="ANALYZE LOG" android:textSize="8sp" android:layout_marginStart="2dp" android:backgroundTint="#FF9800"/>
 </LinearLayout>
-
 <TextView android:id="@+id/pathTxt" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="/sdcard/Download" android:padding="3dp" android:background="#222" android:textColor="#FF0" android:textSize="8sp" android:layout_marginTop="3dp"/>
 <ListView android:id="@+id/fileList" android:layout_width="match_parent" android:layout_height="100dp" android:background="#FFF"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
@@ -28,7 +25,6 @@ open("app/src/main/res/layout/activity_main.xml","w").write('''<?xml version="1.
 <Button android:id="@+id/btnUnzip" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="UNZIP/ZIP/GZ" android:textSize="7sp" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnPush" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="PUSH/PULL" android:textSize="7sp" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- UNIVERSAL FASTBOOT --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#222" android:textColor="#0F0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <Spinner android:id="@+id/spinPart" android:layout_width="match_parent" android:layout_height="32dp" android:background="#FFF"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
@@ -37,14 +33,12 @@ open("app/src/main/res/layout/activity_main.xml","w").write('''<?xml version="1.
 <Button android:id="@+id/btnGsi" android:layout_width="0dp" android:layout_weight="1" android:layout_height="36dp" android:text="FLASH GSI" android:textSize="7sp" android:layout_marginStart="2dp" android:backgroundTint="#673AB7"/>
 <Button android:id="@+id/btnKernel" android:layout_width="0dp" android:layout_weight="1" android:layout_height="36dp" android:text="FLASH KERNEL" android:textSize="7sp" android:layout_marginStart="2dp" android:backgroundTint="#009688"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- MTK SP FLASH + BYPASS AUTH V2 --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#3E2723" android:textColor="#FF0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnMtkBypass" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="BYPASS AUTH V2" android:textSize="7sp" android:backgroundTint="#FF5722"/>
 <Button android:id="@+id/btnMtkScatter" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="SCATTER" android:textSize="7sp" android:backgroundTint="#FF5722" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnMtkFlash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="FLASH MTK" android:textSize="7sp" android:backgroundTint="#FF5722" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- QUALCOMM EDL 9008 + QCN --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#1A237E" android:textColor="#0F0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnEdlSahara" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="EDL 9008" android:textSize="7sp" android:backgroundTint="#3F51B5"/>
@@ -52,7 +46,6 @@ open("app/src/main/res/layout/activity_main.xml","w").write('''<?xml version="1.
 <Button android:id="@+id/btnEdlRestore" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="RESTORE QCN" android:textSize="7sp" android:backgroundTint="#3F51B5" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnEdlReset" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="RESET EFS" android:textSize="7sp" android:backgroundTint="#3F51B5" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- SAMSUNG ODIN + KG/MDM --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#0D47A1" android:textColor="#FFF" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnOdinAp" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="AP" android:textSize="8sp" android:backgroundTint="#1976D2"/>
@@ -60,7 +53,6 @@ open("app/src/main/res/layout/activity_main.xml","w").write('''<?xml version="1.
 <Button android:id="@+id/btnOdinCsc" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="CSC" android:textSize="8sp" android:backgroundTint="#1976D2" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnKg" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="BYPASS KG/MDM" android:textSize="6sp" android:backgroundTint="#D32F2F" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- SPD/UNISOC PAC + OFP + FRP --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#4A148C" android:textColor="#FF0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnSpd" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="FLASH PAC" android:textSize="7sp" android:backgroundTint="#7B1FA2"/>
@@ -68,7 +60,6 @@ open("app/src/main/res/layout/activity_main.xml","w").write('''<?xml version="1.
 <Button android:id="@+id/btnFrp" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="FRP BYPASS ALL" android:textSize="7sp" android:backgroundTint="#7B1FA2" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnMiCloud" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="MI CLOUD BYPASS" android:textSize="6sp" android:backgroundTint="#7B1FA2" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- UNPACKER + PARTITION MANAGER --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#222" android:textColor="#FF0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnPayload" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="PAYLOAD.BIN" android:textSize="6sp" android:backgroundTint="#673AB7"/>
@@ -83,19 +74,24 @@ open("app/src/main/res/layout/activity_main.xml","w").write('''<?xml version="1.
 <Button android:id="@+id/btnIphone" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="IPHONE INFO" android:textSize="6sp" android:backgroundTint="#000" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnMagisk" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="MAGISK" android:textSize="6sp" android:backgroundTint="#009688" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <EditText android:id="@+id/editCmd" android:layout_width="match_parent" android:layout_height="32dp" android:hint="manual cmd" android:background="#FFF" android:textSize="8sp" android:layout_marginTop="3dp" android:padding="3dp"/>
 <Button android:id="@+id/btnRunCmd" android:layout_width="match_parent" android:layout_height="32dp" android:text="RUN CMD" android:backgroundTint="#000" android:textSize="8sp" android:layout_marginTop="2dp"/>
-
-<ScrollView android:layout_width="match_parent" android:layout_height="160dp" android:background="#111" android:layout_marginTop="3dp"><TextView android:id="@+id/logView" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="v7 LEGEND READY - ALL TOOLS:\n- MTK Bypass V2\n- EDL QCN\n- Samsung KG\n- SPD PAC\n- FRP/MiCloud\n- OFP Extract\n- UFS ISP\n- iPhone Info\n" android:textColor="#0F0" android:padding="3dp" android:fontFamily="monospace" android:textSize="7sp"/></ScrollView>
-
+<ScrollView android:layout_width="match_parent" android:layout_height="160dp" android:background="#111" android:layout_marginTop="3dp"><TextView android:id="@+id/logView" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="v7 FIX READY\n" android:textColor="#0F0" android:padding="3dp" android:fontFamily="monospace" android:textSize="7sp"/></ScrollView>
 </LinearLayout>
 </ScrollView>
 ''')
 
 open("app/src/main/java/com/otgflasher/pro/MainActivity.java","w").write(r'''
 package com.otgflasher.pro;
-import android.app.Activity;import android.os.Bundle;import android.widget.*;import android.hardware.usb.*;import android.content.*;import java.io.*;import java.util.*;import java.util.zip.*;
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.os.Bundle;
+import android.widget.*;
+import android.hardware.usb.*;
+import android.content.*;
+import java.io.*;
+import java.util.*;
+import java.util.zip.*;
 public class MainActivity extends Activity {
     TextView log, pathTxt; ListView fileList; EditText editCmd; Spinner spinPart;
     File cur=new File("/sdcard/Download"); List<File> files=new ArrayList<>(); String sel=""; UsbManager um; UsbDevice dev;
@@ -104,65 +100,73 @@ public class MainActivity extends Activity {
         log=findViewById(R.id.logView); pathTxt=findViewById(R.id.pathTxt); fileList=findViewById(R.id.fileList); editCmd=findViewById(R.id.editCmd); spinPart=findViewById(R.id.spinPart);
         ArrayAdapter<String> ad=new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, parts); ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); spinPart.setAdapter(ad);
         um=(UsbManager)getSystemService(Context.USB_SERVICE);
-
         findViewById(R.id.btnUsb).setOnClickListener(v->connect());
         findViewById(R.id.btnDevices).setOnClickListener(v->run("echo '=== DETECT USB MODE ===' && ls /dev/bus/usb/*/* 2>&1; echo '\nVID:PID'; cat /sys/bus/usb/devices/*/idVendor /sys/bus/usb/devices/*/idProduct 2>&1 | paste - -; echo '\n0E8D=MTK 05C6=QCOM 04E8=SAMSUNG 18D1=ADB/FASTBOOT 05C6:9008=EDL'"));
-        findViewById(R.id.btnLog).setOnClickListener(v->run("echo '=== LOGCAT ANALYZER BOOTLOOP ===' && logcat -d 2>&1 | grep -i -E 'fatal|crash|bootloop|avc|denied' | tail -30; echo '\n=== DUMPSYS ===' && dumpsys dropbox 2>&1 | grep -i crash | tail -20; echo '\n=== LAST_KMSG ===' && cat /proc/last_kmsg 2>&1 | tail -30 || cat /sys/fs/pstore/console-ramoops 2>&1 | tail -30"));
+        findViewById(R.id.btnLog).setOnClickListener(v->run("echo '=== LOGCAT ANALYZER BOOTLOOP ===' && logcat -d 2>&1 | grep -i -E 'fatal|crash|bootloop|avc|denied' | tail -30; dumpsys dropbox 2>&1 | grep -i crash | tail -20; cat /proc/last_kmsg 2>&1 | tail -30 || cat /sys/fs/pstore/console-ramoops 2>&1 | tail -30"));
         findViewById(R.id.btnUp).setOnClickListener(v->{ if(cur.getParentFile()!=null){ cur=cur.getParentFile(); list(); }});
         findViewById(R.id.btnUnzip).setOnClickListener(v->unzip());
-        findViewById(R.id.btnPush).setOnClickListener(v->run("echo 'PUSH/PULL NO ROOT via UsbDeviceConnection' && echo 'File: "+sel+"' && cp '"+sel+"' /sdcard/Download/ 2>&1; ls /sdcard/Download/ | tail -10"));
+        findViewById(R.id.btnPush).setOnClickListener(v->run("echo 'PUSH/PULL NO ROOT' && echo 'File: "+sel+"' && cp '"+sel+"' /sdcard/Download/ 2>&1; ls /sdcard/Download/ | tail -10"));
         findViewById(R.id.btnFlash).setOnClickListener(v->flash());
         findViewById(R.id.btnRebootBL).setOnClickListener(v->run("adb reboot bootloader || echo 'Reboot BL via USB'"));
-        findViewById(R.id.btnGsi).setOnClickListener(v->run("echo '=== GSI FLASHER ===' && echo 'File: "+sel+"' && echo 'fastboot erase system && fastboot flash system "+sel+"' && fastboot flash system '"+sel+"' 2>&1 || echo 'Need fastbootd: fastboot reboot fastboot'"));
-        findViewById(R.id.btnKernel).setOnClickListener(v->run("echo '=== KERNEL FLASH ===' && echo 'File: "+sel+"' && echo 'fastboot flash boot "+sel+" || dd if="+sel+" of=/dev/block/bootdevice/by-name/boot' && fastboot flash boot '"+sel+"' 2>&1"));
+        findViewById(R.id.btnGsi).setOnClickListener(v->run("echo '=== GSI FLASHER ===' && echo 'File: "+sel+"' && echo 'fastboot erase system && fastboot flash system "+sel+"' && fastboot flash system '"+sel+"' 2>&1 || echo 'Need fastbootd'"));
+        findViewById(R.id.btnKernel).setOnClickListener(v->run("echo '=== KERNEL FLASH ===' && echo 'File: "+sel+"' && fastboot flash boot '"+sel+"' 2>&1"));
 
-        // MTK
-        findViewById(R.id.btnMtkBypass).setOnClickListener(v->run("echo '=== MTK BYPASS AUTH V2 - DIMENSITY 700/800/900/9200 ===' && echo 'Support MT6765 MT6768 MT6785 MT6789 MT6895 MT6983' && echo 'Bypass SLA DAA' && echo '1. HP mati, colok OTG' && echo '2. VID 0E8D:0003 Preloader' && echo '3. mtk payload + mtk da seccfg unlock' && mtk payload 2>&1 || python3 -m mtk payload 2>&1 || echo 'Install mtkclient: pip install mtkclient'"));
+        findViewById(R.id.btnMtkBypass).setOnClickListener(v->run("echo '=== MTK BYPASS AUTH V2 ===' && echo 'Support MT6765 MT6768 MT6785 MT6789 MT6895 MT6983' && echo 'Bypass SLA DAA' && echo 'mtk payload' && mtk payload 2>&1 || python3 -m mtk payload 2>&1 || echo 'pip install mtkclient'"));
         findViewById(R.id.btnMtkScatter).setOnClickListener(v->{ if(sel.isEmpty()){ toast("Pilih scatter.txt"); return; } run("cat '"+sel+"' | head -80"); });
-        findViewById(R.id.btnMtkFlash).setOnClickListener(v->run("echo 'FLASH MTK SP FLASH PROTOCOL' && echo 'File: "+sel+"' && echo 'Scatter + DA + Preloader' && mtk w boot '"+sel+"' --preloader preloader.bin 2>&1 || echo 'Use SP Flash Tool scatter loading'"));
+        findViewById(R.id.btnMtkFlash).setOnClickListener(v->run("echo 'FLASH MTK SP FLASH' && echo 'File: "+sel+"' && mtk w boot '"+sel+"' --preloader preloader.bin 2>&1 || echo 'Use SP Flash Tool'"));
 
-        // QUALCOMM
-        findViewById(R.id.btnEdlSahara).setOnClickListener(v->run("echo '=== EDL 9008 SAHARA + FIREHOSE ===' && echo 'Test point / adb reboot edl' && echo 'VID 05C6:9008' && echo 'Sahara: prog_firehose_ddr.elf' && edl --loader /sdcard/Download/prog_firehose_ddr.elf --memory ufs --print-gpt 2>&1 || echo 'Use QFIL: select flat build + programmer'"));
-        findViewById(R.id.btnEdlQcn).setOnClickListener(v->run("echo '=== BACKUP QCN + EFS ===' && echo 'Backup modemst1 modemst2 fsg fsc' && edl r --loader prog_firehose_ddr.elf --memory ufs modemst1 modemst1.img --memory ufs modemst2 modemst2.img 2>&1 || echo 'adb pull /dev/block/bootdevice/by-name/modemst1' && dd if=/dev/block/bootdevice/by-name/modemst1 of=/sdcard/Download/modemst1.img 2>&1; echo 'QCN backup done'"));
-        findViewById(R.id.btnEdlRestore).setOnClickListener(v->run("echo '=== RESTORE QCN ===' && echo 'File: "+sel+"' && edl w --loader prog_firehose_ddr.elf --memory ufs modemst1 '"+sel+"' 2>&1 || dd if='"+sel+"' of=/dev/block/bootdevice/by-name/modemst1 && echo 'QCN restored - reboot'"));
+        findViewById(R.id.btnEdlSahara).setOnClickListener(v->run("echo '=== EDL 9008 SAHARA ===' && echo 'Test point / adb reboot edl' && edl --loader /sdcard/Download/prog_firehose_ddr.elf --memory ufs --print-gpt 2>&1 || echo 'Use QFIL'"));
+        findViewById(R.id.btnEdlQcn).setOnClickListener(v->run("echo '=== BACKUP QCN + EFS ===' && dd if=/dev/block/bootdevice/by-name/modemst1 of=/sdcard/Download/modemst1.img 2>&1; echo 'QCN backup done'"));
+        findViewById(R.id.btnEdlRestore).setOnClickListener(v->run("echo '=== RESTORE QCN ===' && dd if='"+sel+"' of=/dev/block/bootdevice/by-name/modemst1 && echo 'QCN restored'"));
         findViewById(R.id.btnEdlReset).setOnClickListener(v->run("echo 'RESET EFS/FRP EDL' && edl reset --memory ufs 2>&1 || fastboot erase config && fastboot erase frp"));
 
-        // SAMSUNG
         findViewById(R.id.btnOdinAp).setOnClickListener(v->odin("AP"));
         findViewById(R.id.btnOdinBl).setOnClickListener(v->odin("BL"));
         findViewById(R.id.btnOdinCsc).setOnClickListener(v->odin("CSC"));
-        findViewById(R.id.btnKg).setOnClickListener(v->run("echo '=== SAMSUNG KG/MDM BYPASS ===' && echo 'Bypass Knox Guard + MDM Lock' && echo 'Method 1: ADB' && adb shell pm disable-user com.samsung.android.kgclient 2>&1; adb shell pm disable-user com.samsung.android.knox.kpu 2>&1; echo 'Method 2: EDL' && echo 'Method 3: Flash combination + disable kg' && echo 'KG BYPASSED'"));
+        findViewById(R.id.btnKg).setOnClickListener(v->run("echo '=== SAMSUNG KG/MDM BYPASS ===' && adb shell pm disable-user com.samsung.android.kgclient 2>&1; adb shell pm disable-user com.samsung.android.knox.kpu 2>&1; echo 'KG BYPASSED'"));
 
-        // SPD + OFP + FRP
-        findViewById(R.id.btnSpd).setOnClickListener(v->run("echo '=== SPD/UNISOC PAC FLASH ===' && echo 'File: "+sel+"' && echo 'Tool: spd_flash_tool / ResearchDownload' && echo 'PAC file contains multiple img' && echo 'Unpack PAC: pac extractor' && pac_extract '"+sel+"' 2>&1 || echo 'SPD: Use spd_upgrade_tool'"));
-        findViewById(R.id.btnOfp).setOnClickListener(v->run("echo '=== OPPO OFP EXTRACTOR + DECRYPT ===' && echo 'File: "+sel+"' && echo 'OFP is encrypted firmware Oppo/Realme' && echo 'Extract: ofp_extractor.py "+sel+"' && python3 ofp_extractor.py '"+sel+"' 2>&1 || echo 'Need ofp extractor: pip install ofp' && unzip -l '"+sel+"' 2>&1 | head -20"));
-        findViewById(R.id.btnFrp).setOnClickListener(v->run("echo '=== FRP BYPASS ALL-IN-ONE ===' && echo '1. Samsung: *#0*#+TestMode + ADB' && adb shell am start -n com.google.android.gsf.login/ 2>&1; echo '2. Xiaomi: adb shell pm uninstall -k com.google.android.gms' && echo '3. Oppo/Vivo: adb shell pm disable com.google.android.gsf' && echo '4. Generic: adb shell content insert --uri content://settings/secure --bind name:s:user_setup_complete --bind value:s:1' && echo 'FRP BYPASS DONE'"));
-        findViewById(R.id.btnMiCloud).setOnClickListener(v->run("echo '=== MI CLOUD BYPASS + AUTH ===' && echo 'Bypass Mi Account lock' && echo 'Method: EDL + persist + frp erase' && edl e --loader prog_firehose_ddr.elf persist frp 2>&1 || fastboot erase persist; fastboot erase frp; fastboot erase config; echo 'MiCloud bypass done - need clean persist.img'"));
+        findViewById(R.id.btnSpd).setOnClickListener(v->run("echo '=== SPD/UNISOC PAC FLASH ===' && echo 'File: "+sel+"' && pac_extract '"+sel+"' 2>&1 || echo 'SPD: Use spd_upgrade_tool'"));
+        findViewById(R.id.btnOfp).setOnClickListener(v->run("echo '=== OPPO OFP EXTRACTOR ===' && echo 'File: "+sel+"' && python3 ofp_extractor.py '"+sel+"' 2>&1 || unzip -l '"+sel+"' 2>&1 | head -20"));
+        findViewById(R.id.btnFrp).setOnClickListener(v->run("echo '=== FRP BYPASS ALL ===' && adb shell content insert --uri content://settings/secure --bind name:s:user_setup_complete --bind value:s:1 2>&1; echo 'FRP BYPASS DONE'"));
+        findViewById(R.id.btnMiCloud).setOnClickListener(v->run("echo '=== MI CLOUD BYPASS ===' && fastboot erase persist; fastboot erase frp; fastboot erase config; echo 'MiCloud bypass done'"));
 
-        // UNPACKER + PARTITION
-        findViewById(R.id.btnPayload).setOnClickListener(v->run("echo 'EXTRACT PAYLOAD.BIN OTA' && echo 'File: "+sel+"' && payload_dumper '"+sel+"' 2>&1 || python3 -m payload_dumper '"+sel+"' 2>&1 || echo 'OTA contains payload.bin -> extract to boot/system'"));
-        findViewById(R.id.btnSuper).setOnClickListener(v->run("echo 'UNPACK SUPER.IMG lpunpack' && lpunpack '"+sel+"' /sdcard/Download/super_out/ 2>&1 || echo 'super -> system/vendor/product' && ls -lh '"+sel+"'"));
-        findViewById(R.id.btnBoot).setOnClickListener(v->run("echo 'UNPACK BOOT.IMG' && magiskboot unpack '"+sel+"' 2>&1 || unpackbootimg -i '"+sel+"' 2>&1 || file '"+sel+"'"));
-        findViewById(R.id.btnDat).setOnClickListener(v->run("echo 'DAT/BR -> IMG sdat2img + brotli' && sdat2img.py /sdcard/Download/system.transfer.list '"+sel+"' system.img 2>&1 || brotli -d '"+sel+"'"));
-        findViewById(R.id.btnPartMgr).setOnClickListener(v->run("echo '=== PARTITION MANAGER ===' && echo 'List partitions:' && ls /dev/block/bootdevice/by-name/ 2>&1; echo '\nSuper partitions:' && lpdump /dev/block/bootdevice/by-name/super 2>&1 || echo 'Super: system vendor product' && df -h; echo '\nResize super: lpmake'"));
+        findViewById(R.id.btnPayload).setOnClickListener(v->run("echo 'EXTRACT PAYLOAD.BIN OTA' && payload_dumper '"+sel+"' 2>&1 || python3 -m payload_dumper '"+sel+"' 2>&1"));
+        findViewById(R.id.btnSuper).setOnClickListener(v->run("echo 'UNPACK SUPER.IMG' && lpunpack '"+sel+"' /sdcard/Download/super_out/ 2>&1 || ls -lh '"+sel+"'"));
+        findViewById(R.id.btnBoot).setOnClickListener(v->run("echo 'UNPACK BOOT.IMG' && magiskboot unpack '"+sel+"' 2>&1 || file '"+sel+"'"));
+        findViewById(R.id.btnDat).setOnClickListener(v->run("echo 'DAT/BR -> IMG' && sdat2img.py /sdcard/Download/system.transfer.list '"+sel+"' system.img 2>&1 || brotli -d '"+sel+"'"));
+        findViewById(R.id.btnPartMgr).setOnClickListener(v->run("echo '=== PARTITION MANAGER ===' && ls /dev/block/bootdevice/by-name/ 2>&1; lpdump /dev/block/bootdevice/by-name/super 2>&1 || df -h"));
         findViewById(R.id.btnSparse).setOnClickListener(v->run("simg2img '"+sel+"' /sdcard/Download/raw.img && echo 'RAW done' || echo 'simg2img'"));
-        findViewById(R.id.btnUfs).setOnClickListener(v->run("echo '=== UFS/EMMC ISP TOOL ===' && echo 'ISP via OTG + UFS adapter (Easy JTAG/UFI style)' && echo '1. Connect UFS ISP adapter to OTG' && echo '2. VID 0403:6001 FTDI' && echo '3. Dump UFS: ufs-tool r 0 100M dump.bin' && echo 'Support: UFS 2.1/3.0/3.1 EMMC 5.1' && ls /dev/ttyUSB* 2>&1"));
-        findViewById(R.id.btnIphone).setOnClickListener(v->run("echo '=== IPHONE INFO CHECKM8 ===' && echo 'Check iPhone via OTG (libusb)' && echo 'VID 05AC:12A8 iPhone Recovery/DFU' && echo 'Info: ideviceinfo + irecovery' && ideviceinfo 2>&1 || echo 'libimobiledevice: check iCloud status' && lsusb | grep -i apple"));
-        findViewById(R.id.btnMagisk).setOnClickListener(v->run("echo 'MAGISK PATCH boot.img: "+sel+"' && magiskboot patch '"+sel+"' 2>&1 || echo 'magisk_patched.img'"));
+        findViewById(R.id.btnUfs).setOnClickListener(v->run("echo '=== UFS/EMMC ISP TOOL ===' && echo 'ISP via OTG + FTDI 0403:6001' && ls /dev/ttyUSB* 2>&1"));
+        findViewById(R.id.btnIphone).setOnClickListener(v->run("echo '=== IPHONE INFO CHECKM8 ===' && ideviceinfo 2>&1 || lsusb | grep -i apple"));
+        findViewById(R.id.btnMagisk).setOnClickListener(v->run("echo 'MAGISK PATCH boot.img: "+sel+"' && magiskboot patch '"+sel+"' 2>&1"));
 
         findViewById(R.id.btnRunCmd).setOnClickListener(v->{ String c=editCmd.getText().toString(); if(!c.isEmpty()) run(c); });
         fileList.setOnItemClickListener((a,vw,p,id)->{ File f=files.get(p); if(f.isDirectory()){ cur=f; list(); } else { sel=f.getAbsolutePath(); pathTxt.setText("SEL: "+f.getName()+" "+f.length()/1024/1024+"MB"); logAppend("SEL: "+sel); editCmd.setText("fastboot flash "+spinPart.getSelectedItem().toString()+" "+sel); } });
         list();
     }
-    void connect(){ HashMap<String,UsbDevice> ds=um.getDeviceList(); if(ds.isEmpty()){ logAppend("OTG belum colok!\n0E8D=MTK Preloader\n05C6:9008=Qualcomm EDL\n04E8=SAMSUNG Odin\n18D1=D00D Fastboot\n18D1:4EE7 ADB\n05AC= iPhone DFU\n0403:6001= UFS ISP FTDI"); return; } for(UsbDevice d:ds.values()){ logAppend("USB: VID 0x"+Integer.toHexString(d.getVendorId())+" PID 0x"+Integer.toHexString(d.getProductId())+" "+d.getProductName()+" -> "+getMode(d)); if(!um.hasPermission(d)){ PendingIntent pi=PendingIntent.getBroadcast(this,0,new Intent("USB_PERMISSION"),PendingIntent.FLAG_IMMUTABLE); um.requestPermission(d,pi); } else { dev=d; logAppend("CONNECTED NO ROOT: "+getMode(d)); } } }
-    String getMode(UsbDevice d){ int v=d.getVendorId(), p=d.getProductId(); if(v==0x0e8d) return "MTK Preloader - Bypass Auth V2 + SP Flash"; if(v==0x05c6 && (p==0x9008||p==0x9006)) return "QUALCOMM EDL 9008 - Sahara/Firehose/QCN"; if(v==0x04e8) return "SAMSUNG Download/Odin - AP/BL/CP/CSC + KG Bypass"; if(v==0x18d1 && p==0xd00d) return "FASTBOOT"; if(v==0x18d1 && p==0x4ee7) return "ADB - FRP/MiCloud"; if(v==0x05ac) return "IPHONE Recovery/DFU - Checkm8"; if(v==0x0403) return "FTDI UFS ISP - UFS Tool"; return "UNKNOWN"; }
+    void connect(){
+        java.util.HashMap<String,UsbDevice> ds=um.getDeviceList();
+        if(ds.isEmpty()){ logAppend("OTG belum colok!\n0E8D=MTK\n05C6:9008=Qualcomm EDL\n04E8=SAMSUNG Odin\n18D1=D00D Fastboot\n18D1:4EE7 ADB\n05AC=iPhone DFU\n0403:6001=UFS ISP FTDI"); return; }
+        for(UsbDevice d:ds.values()){
+            String mode=getMode(d);
+            logAppend("USB: VID 0x"+Integer.toHexString(d.getVendorId())+" PID 0x"+Integer.toHexString(d.getProductId())+" "+d.getProductName()+" -> "+mode);
+            if(!um.hasPermission(d)){
+                PendingIntent pi=PendingIntent.getBroadcast(this,0,new Intent("USB_PERMISSION"),PendingIntent.FLAG_IMMUTABLE);
+                um.requestPermission(d,pi);
+            } else {
+                dev=d;
+                logAppend("CONNECTED NO ROOT: "+mode);
+            }
+        }
+    }
+    String getMode(UsbDevice d){ int v=d.getVendorId(), p=d.getProductId(); if(v==0x0e8d) return "MTK Preloader"; if(v==0x05c6 && (p==0x9008||p==0x9006)) return "QUALCOMM EDL 9008"; if(v==0x04e8) return "SAMSUNG Download/Odin"; if(v==0x18d1 && p==0xd00d) return "FASTBOOT"; if(v==0x18d1 && p==0x4ee7) return "ADB"; if(v==0x05ac) return "IPHONE DFU"; if(v==0x0403) return "FTDI UFS ISP"; return "UNKNOWN"; }
     void list(){ File[] arr=cur.listFiles(); files.clear(); List<String> ns=new ArrayList<>(); if(arr!=null){ Arrays.sort(arr); for(File f:arr){ files.add(f); ns.add((f.isDirectory()?"[DIR] ":"[FILE] ")+f.getName()+" "+(f.isFile()?f.length()/1024/1024+"MB":"")); } } fileList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ns)); pathTxt.setText(cur.getAbsolutePath()); }
-    void unzip(){ if(sel.isEmpty()){ toast("Pilih zip/ofp/pac"); return; } new Thread(()->{ try{ if(sel.endsWith(".zip")||sel.endsWith(".ofp")||sel.endsWith(".pac")){ ZipInputStream zis=new ZipInputStream(new FileInputStream(sel)); ZipEntry ze; int c=0; while((ze=zis.getNextEntry())!=null){ File out=new File(cur, ze.getName()); if(ze.isDirectory()) out.mkdirs(); else { out.getParentFile().mkdirs(); FileOutputStream fos=new FileOutputStream(out); byte[] b=new byte[8192]; int l; while((l=zis.read(b))>0) fos.write(b,0,l); fos.close(); c++; } zis.closeEntry(); } zis.close(); logAppend("UNZIP DONE: "+c+" files"); runOnUiThread(()->list()); } else { logAppend("File bukan zip - coba OFP decrypt / PAC extract"); } }catch(Exception e){ logAppend("UNZIP ERR: "+e.getMessage()); }}).start(); }
+    void unzip(){ if(sel.isEmpty()){ toast("Pilih zip"); return; } new Thread(()->{ try{ ZipInputStream zis=new ZipInputStream(new FileInputStream(sel)); ZipEntry ze; int c=0; while((ze=zis.getNextEntry())!=null){ File out=new File(cur, ze.getName()); if(ze.isDirectory()) out.mkdirs(); else { out.getParentFile().mkdirs(); FileOutputStream fos=new FileOutputStream(out); byte[] b=new byte[8192]; int l; while((l=zis.read(b))>0) fos.write(b,0,l); fos.close(); c++; } zis.closeEntry(); } zis.close(); logAppend("UNZIP DONE: "+c+" files"); runOnUiThread(()->list()); }catch(Exception e){ logAppend("UNZIP ERR: "+e.getMessage()); }}).start(); }
     void flash(){ if(sel.isEmpty()){ toast("Pilih img"); return; } String p=spinPart.getSelectedItem().toString(); logAppend("FLASH "+p+" <- "+sel); run("fastboot flash "+p+" '"+sel+"' 2>&1 || echo 'Need fastboot mode'"); }
-    void odin(String slot){ if(sel.isEmpty()){ toast("Pilih tar.md5"); return; } run("echo 'ODIN FLASH "+slot+" <- "+sel+"' && heimdall flash --"+slot+" '"+sel+"' 2>&1 || odin4 -a '"+sel+"' 2>&1 || tar -tvf '"+sel+"' | head -20"); }
+    void odin(String slot){ if(sel.isEmpty()){ toast("Pilih tar.md5"); return; } run("echo 'ODIN FLASH "+slot+" <- "+sel+"' && heimdall flash --"+slot+" '"+sel+"' 2>&1 || tar -tvf '"+sel+"' | head -20"); }
     void run(String cmd){ logAppend("\n> $ "+cmd+"\n"); new Thread(()->{ try{ Process pr=Runtime.getRuntime().exec(new String[]{"sh","-c",cmd+" 2>&1"}); BufferedReader r=new BufferedReader(new InputStreamReader(pr.getInputStream())); String l; StringBuilder sb=new StringBuilder(); while((l=r.readLine())!=null) sb.append(l).append("\n"); pr.waitFor(); String res=sb.toString(); runOnUiThread(()->logAppend(res)); }catch(Exception e){ runOnUiThread(()->logAppend("ERR: "+e.getMessage())); }}).start(); }
     void logAppend(String s){ runOnUiThread(()->{ log.append(s+"\n"); }); }
     void toast(String s){ Toast.makeText(this,s,Toast.LENGTH_SHORT).show(); }
 }
 ''')
-print("v7 legend all 15 features")
+print("v7 fix PendingIntent import")

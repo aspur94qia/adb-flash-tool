@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#0A0A0A">
 <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="5dp">
-
-<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="OTG FLASHER v7 LEGEND - ALL CHIPSET + ALL TOOLS - NO ROOT" android:textSize="9sp" android:textStyle="bold" android:gravity="center" android:padding="6dp" android:background="#000" android:textColor="#0F0"/>
-
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="OTG FLASHER v7 FIX - ALL CHIPSET - NO ROOT" android:textSize="9sp" android:textStyle="bold" android:gravity="center" android:padding="6dp" android:background="#000" android:textColor="#0F0"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
 <Button android:id="@+id/btnUsb" android:layout_width="0dp" android:layout_weight="1" android:layout_height="40dp" android:text="CONNECT OTG" android:backgroundTint="#4CAF50" android:textSize="8sp"/>
 <Button android:id="@+id/btnDevices" android:layout_width="0dp" android:layout_weight="1" android:layout_height="40dp" android:text="DETECT MODE" android:textSize="8sp" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnLog" android:layout_width="0dp" android:layout_weight="1" android:layout_height="40dp" android:text="ANALYZE LOG" android:textSize="8sp" android:layout_marginStart="2dp" android:backgroundTint="#FF9800"/>
 </LinearLayout>
-
 <TextView android:id="@+id/pathTxt" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="/sdcard/Download" android:padding="3dp" android:background="#222" android:textColor="#FF0" android:textSize="8sp" android:layout_marginTop="3dp"/>
 <ListView android:id="@+id/fileList" android:layout_width="match_parent" android:layout_height="100dp" android:background="#FFF"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
@@ -17,7 +14,6 @@
 <Button android:id="@+id/btnUnzip" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="UNZIP/ZIP/GZ" android:textSize="7sp" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnPush" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="PUSH/PULL" android:textSize="7sp" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- UNIVERSAL FASTBOOT --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#222" android:textColor="#0F0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <Spinner android:id="@+id/spinPart" android:layout_width="match_parent" android:layout_height="32dp" android:background="#FFF"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
@@ -26,14 +22,12 @@
 <Button android:id="@+id/btnGsi" android:layout_width="0dp" android:layout_weight="1" android:layout_height="36dp" android:text="FLASH GSI" android:textSize="7sp" android:layout_marginStart="2dp" android:backgroundTint="#673AB7"/>
 <Button android:id="@+id/btnKernel" android:layout_width="0dp" android:layout_weight="1" android:layout_height="36dp" android:text="FLASH KERNEL" android:textSize="7sp" android:layout_marginStart="2dp" android:backgroundTint="#009688"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- MTK SP FLASH + BYPASS AUTH V2 --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#3E2723" android:textColor="#FF0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnMtkBypass" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="BYPASS AUTH V2" android:textSize="7sp" android:backgroundTint="#FF5722"/>
 <Button android:id="@+id/btnMtkScatter" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="SCATTER" android:textSize="7sp" android:backgroundTint="#FF5722" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnMtkFlash" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="FLASH MTK" android:textSize="7sp" android:backgroundTint="#FF5722" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- QUALCOMM EDL 9008 + QCN --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#1A237E" android:textColor="#0F0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnEdlSahara" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="EDL 9008" android:textSize="7sp" android:backgroundTint="#3F51B5"/>
@@ -41,7 +35,6 @@
 <Button android:id="@+id/btnEdlRestore" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="RESTORE QCN" android:textSize="7sp" android:backgroundTint="#3F51B5" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnEdlReset" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="RESET EFS" android:textSize="7sp" android:backgroundTint="#3F51B5" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- SAMSUNG ODIN + KG/MDM --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#0D47A1" android:textColor="#FFF" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnOdinAp" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="AP" android:textSize="8sp" android:backgroundTint="#1976D2"/>
@@ -49,7 +42,6 @@
 <Button android:id="@+id/btnOdinCsc" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="CSC" android:textSize="8sp" android:backgroundTint="#1976D2" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnKg" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="BYPASS KG/MDM" android:textSize="6sp" android:backgroundTint="#D32F2F" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- SPD/UNISOC PAC + OFP + FRP --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#4A148C" android:textColor="#FF0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnSpd" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="FLASH PAC" android:textSize="7sp" android:backgroundTint="#7B1FA2"/>
@@ -57,7 +49,6 @@
 <Button android:id="@+id/btnFrp" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="FRP BYPASS ALL" android:textSize="7sp" android:backgroundTint="#7B1FA2" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnMiCloud" android:layout_width="0dp" android:layout_weight="1" android:layout_height="34dp" android:text="MI CLOUD BYPASS" android:textSize="6sp" android:backgroundTint="#7B1FA2" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-- UNPACKER + PARTITION MANAGER --" android:textSize="8sp" android:textStyle="bold" android:gravity="center" android:background="#222" android:textColor="#FF0" android:padding="2dp" android:layout_marginTop="4dp"/>
 <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp">
 <Button android:id="@+id/btnPayload" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="PAYLOAD.BIN" android:textSize="6sp" android:backgroundTint="#673AB7"/>
@@ -72,20 +63,9 @@
 <Button android:id="@+id/btnIphone" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="IPHONE INFO" android:textSize="6sp" android:backgroundTint="#000" android:layout_marginStart="2dp"/>
 <Button android:id="@+id/btnMagisk" android:layout_width="0dp" android:layout_weight="1" android:layout_height="32dp" android:text="MAGISK" android:textSize="6sp" android:backgroundTint="#009688" android:layout_marginStart="2dp"/>
 </LinearLayout>
-
 <EditText android:id="@+id/editCmd" android:layout_width="match_parent" android:layout_height="32dp" android:hint="manual cmd" android:background="#FFF" android:textSize="8sp" android:layout_marginTop="3dp" android:padding="3dp"/>
 <Button android:id="@+id/btnRunCmd" android:layout_width="match_parent" android:layout_height="32dp" android:text="RUN CMD" android:backgroundTint="#000" android:textSize="8sp" android:layout_marginTop="2dp"/>
-
-<ScrollView android:layout_width="match_parent" android:layout_height="160dp" android:background="#111" android:layout_marginTop="3dp"><TextView android:id="@+id/logView" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="v7 LEGEND READY - ALL TOOLS:
-- MTK Bypass V2
-- EDL QCN
-- Samsung KG
-- SPD PAC
-- FRP/MiCloud
-- OFP Extract
-- UFS ISP
-- iPhone Info
+<ScrollView android:layout_width="match_parent" android:layout_height="160dp" android:background="#111" android:layout_marginTop="3dp"><TextView android:id="@+id/logView" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="v7 FIX READY
 " android:textColor="#0F0" android:padding="3dp" android:fontFamily="monospace" android:textSize="7sp"/></ScrollView>
-
 </LinearLayout>
 </ScrollView>
