@@ -11,7 +11,7 @@ public class MtkActivity extends Activity {
         try{ findViewById(R.id.btn1).setOnClickListener(v->run("mtk r boot boot.img")); }catch(Exception e){}
         try{ findViewById(R.id.btn2).setOnClickListener(v->run("mtk e frp")); }catch(Exception e){}
         try{ findViewById(R.id.btn3).setOnClickListener(v->run("mtk payload")); }catch(Exception e){}
-        try{ findViewById(R.id.btn4).setOnClickListener(v->run("")); }catch(Exception e){}
+        try{ findViewById(R.id.btn4).setOnClickListener(v->run("echo done")); }catch(Exception e){}
         try{ findViewById(R.id.btn5).setOnClickListener(v->run("")); }catch(Exception e){}
         try{ findViewById(R.id.btn6).setOnClickListener(v->run("")); }catch(Exception e){}
         try{ findViewById(R.id.btn7).setOnClickListener(v->run("")); }catch(Exception e){}
