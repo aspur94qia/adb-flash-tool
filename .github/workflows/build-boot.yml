@@ -25,8 +25,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/pkg" "$GITHUB_WORKSPACE/../out"
           cat > "$RUNNER_TEMP/inner.sh" <<'EOF'
           set -eux
-          apt-get update
-          apt-get install -y linux-packaging-snippets
+          apt-get -o Acquire::AllowInsecureRepositories=true -o Acquire::AllowDowngradeToInsecureRepositories=true update
+          apt-get install -y --allow-unauthenticated linux-packaging-snippets
           cd /buildd/sources
 
           if [ ! -f droidian/kernel-info.mk ]; then
