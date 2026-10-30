@@ -24,7 +24,7 @@ jobs:
         with:
           gradle-version: '8.5'
 
-      - name: Create Complete Project Files
+      - name: Create Complete Project Files v5
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
@@ -65,8 +65,8 @@ jobs:
                   applicationId 'com.universal.otgflasher'
                   minSdk 21
                   targetSdk 34
-                  versionCode 4
-                  versionName '4.0.0-BiosProgrammer'
+                  versionCode 5
+                  versionName '5.0.0-UltimateToolkit'
               }
               buildTypes {
                   release {
@@ -92,7 +92,7 @@ jobs:
               <application
                   android:allowBackup="true"
                   android:icon="@mipmap/ic_launcher"
-                  android:label="Universal Flasher &amp; IC BIOS Programmer"
+                  android:label="Universal Flasher &amp; Hardware Toolkit"
                   android:theme="@style/Theme.Material3.DayNight.NoActionBar">
                   <activity android:name=".MainActivity" android:exported="true">
                       <intent-filter>
@@ -117,7 +117,7 @@ jobs:
           </resources>
           XML
 
-          # 6. MainActivity.java
+          # 6. MainActivity.java (Semua Modul Lengkap)
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
@@ -138,12 +138,13 @@ jobs:
                   ProgressBar progressBar = findViewById(R.id.progressBar);
 
                   tabLayout.addTab(tabLayout.newTab().setText("Flasher OTG"));
-                  tabLayout.addTab(tabLayout.newTab().setText("EDL Qualcomm"));
+                  tabLayout.addTab(tabLayout.newTab().setText("EDL & MTK BROM"));
                   tabLayout.addTab(tabLayout.newTab().setText("IC BIOS Programmer"));
+                  tabLayout.addTab(tabLayout.newTab().setText("UART Serial Console"));
                   tabLayout.addTab(tabLayout.newTab().setText("MTP File Manager"));
-                  tabLayout.addTab(tabLayout.newTab().setText("ADB Shell"));
+                  tabLayout.addTab(tabLayout.newTab().setText("ADB Shell & FRP"));
 
-                  statusIndicator.setText("STATUS USB: Waiting USB OTG Connection...");
+                  statusIndicator.setText("STATUS USB: Waiting USB OTG / Serial Cable...");
                   progressBar.setProgress(0);
 
                   tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -174,7 +175,7 @@ jobs:
               <TextView
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="UNIVERSAL OTG &amp; IC BIOS PROGRAMMER v4.0"
+                  android:text="UNIVERSAL OTG &amp; HARDWARE TOOLKIT v5.0"
                   android:textColor="@color/primary_accent"
                   android:textSize="15sp"
                   android:textStyle="bold"
@@ -223,7 +224,7 @@ jobs:
                       android:textColor="#00FF00"
                       android:fontFamily="monospace"
                       android:textSize="12sp"
-                      android:text="[SYSTEM LOG]: Universal Toolkit v4.0 Initialized.\n[FLASHER]: Fastboot A/B &amp; Dynamic Partitions Ready.\n[EDL ENGINE]: Qualcomm QDLoader 9008 Driver Ready.\n[IC BIOS PROGRAMMER]: SPI/I2C EEPROM (CH341A/FT232H) Ready.\n[MTP MANAGER]: File Transfer Protocol Ready.\n[ADB SHELL]: Terminal Emulator Ready." />
+                      android:text="[SYSTEM LOG]: Universal Toolkit v5.0 Ultimate Ready.\n[FLASHER]: Fastboot A/B &amp; Dynamic Partitions Ready.\n[EDL &amp; MTK]: Qualcomm 9008 &amp; MTK BROM Service Ready.\n[IC PROGRAMMER]: SPI/I2C EEPROM (CH341A/FT232H) Ready.\n[UART CONSOLE]: USB-to-Serial Router/STB Debugger Ready.\n[MTP MANAGER]: File Transfer Protocol Ready.\n[ADB &amp; FRP]: Terminal &amp; FRP Service Helper Ready." />
               </ScrollView>
 
           </LinearLayout>
@@ -236,5 +237,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Universal-OTG-BIOS-Programmer-v4
+          name: Universal-OTG-Hardware-Toolkit-v5
           path: app/build/outputs/apk/debug/app-debug.apk
