@@ -19,34 +19,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create Complete Project Files & Download Complete Gradle Wrapper 8.5
+      - name: Create Complete Project Files with IC BIOS Programmer
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
-          mkdir -p gradle/wrapper
 
-          # 1. Setup Gradle 8.5 Wrapper Properties
-          cat << 'PROPS' > gradle/wrapper/gradle-wrapper.properties
-          distributionBase=GRADLE_USER_HOME
-          distributionPath=wrapper/dists
-          distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-bin.zip
-          networkTimeout=10000
-          validateDistributionUrl=true
-          zipStoreBase=GRADLE_USER_HOME
-          zipStorePath=wrapper/dists
-          PROPS
-
-          # 2. Download gradlew stub DAN gradle-wrapper.jar yang valid
-          curl -sSL -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradlew
-          chmod +x gradlew
-          curl -sSL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradle/wrapper/gradle-wrapper.jar
-
-          # 3. settings.gradle
+          # 1. settings.gradle
           echo "rootProject.name = 'Universal-OTG-Toolkit'" > settings.gradle
           echo "include ':app'" >> settings.gradle
 
-          # 4. Root build.gradle
+          # 2. Root build.gradle
           cat << 'GRADLE_ROOT' > build.gradle
           buildscript {
               repositories {
@@ -65,7 +48,7 @@ jobs:
           }
           GRADLE_ROOT
 
-          # 5. App build.gradle
+          # 3. App build.gradle
           cat << 'GRADLE_APP' > app/build.gradle
           plugins {
               id 'com.android.application'
@@ -77,8 +60,8 @@ jobs:
                   applicationId 'com.universal.otgflasher'
                   minSdk 21
                   targetSdk 34
-                  versionCode 3
-                  versionName '3.0.0-FullUniversal'
+                  versionCode 4
+                  versionName '4.0.0-Bios Programmer'
               }
               buildTypes {
                   release {
@@ -93,7 +76,7 @@ jobs:
           }
           GRADLE_APP
 
-          # 6. AndroidManifest.xml
+          # 4. AndroidManifest.xml (USB Host & Serial Permissions)
           cat << 'XML' > app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-feature android:name="android.hardware.usb.host" />
@@ -104,7 +87,7 @@ jobs:
               <application
                   android:allowBackup="true"
                   android:icon="@mipmap/ic_launcher"
-                  android:label="Universal Flasher &amp; MTP Toolkit"
+                  android:label="Universal Flasher &amp; IC BIOS Programmer"
                   android:theme="@style/Theme.Material3.DayNight.NoActionBar">
                   <activity android:name=".MainActivity" android:exported="true">
                       <intent-filter>
@@ -116,7 +99,7 @@ jobs:
           </manifest>
           XML
 
-          # 7. Colors & Themes
+          # 5. Colors & Themes
           cat << 'XML' > app/src/main/res/values/colors.xml
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
@@ -124,12 +107,13 @@ jobs:
               <color name="card_bg">#1E1E1E</color>
               <color name="primary_accent">#00E676</color>
               <color name="secondary_accent">#2979FF</color>
+              <color name="bios_yellow">#FFD600</color>
               <color name="text_main">#FFFFFF</color>
               <color name="text_sub">#B0BEC5</color>
           </resources>
           XML
 
-          # 8. MainActivity.java
+          # 6. MainActivity.java (Tab Manager dengan IC BIOS Programmer Engine)
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
@@ -151,10 +135,11 @@ jobs:
 
                   tabLayout.addTab(tabLayout.newTab().setText("Flasher OTG"));
                   tabLayout.addTab(tabLayout.newTab().setText("EDL Qualcomm"));
+                  tabLayout.addTab(tabLayout.newTab().setText("IC BIOS Programmer"));
                   tabLayout.addTab(tabLayout.newTab().setText("MTP File Manager"));
                   tabLayout.addTab(tabLayout.newTab().setText("ADB Shell"));
 
-                  statusIndicator.setText("STATUS USB: Waiting USB OTG Connection...");
+                  statusIndicator.setText("STATUS USB: Waiting USB OTG / CH341A Programmer...");
                   progressBar.setProgress(0);
 
                   tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -171,7 +156,7 @@ jobs:
           }
           JAVA
 
-          # 9. activity_main.xml Layout
+          # 7. activity_main.xml Layout Presisi
           cat << 'XML' > app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -185,9 +170,9 @@ jobs:
               <TextView
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="UNIVERSAL OTG &amp; MTP TOOLKIT v3.0"
+                  android:text="UNIVERSAL OTG &amp; IC BIOS PROGRAMMER v4.0"
                   android:textColor="@color/primary_accent"
-                  android:textSize="16sp"
+                  android:textSize="15sp"
                   android:textStyle="bold"
                   android:layout_margin="4dp"/>
 
@@ -215,6 +200,7 @@ jobs:
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:background="@color/card_bg"
+                  app:tabMode="scrollable"
                   app:tabTextColor="@color/text_sub"
                   app:tabSelectedTextColor="@color/primary_accent"/>
 
@@ -233,11 +219,16 @@ jobs:
                       android:textColor="#00FF00"
                       android:fontFamily="monospace"
                       android:textSize="12sp"
-                      android:text="[SYSTEM LOG]: Universal Toolkit Initialized.\n[FLASHER]: Fastboot A/B &amp; Dynamic Partitions Ready.\n[EDL ENGINE]: Qualcomm QDLoader 9008 Driver Ready.\n[MTP MANAGER]: File Transfer Protocol Ready.\n[ADB SHELL]: Terminal Emulator Ready." />
+                      android:text="[SYSTEM LOG]: Universal Toolkit v4.0 Initialized.\n[FLASHER]: Fastboot A/B &amp; Dynamic Partitions Ready.\n[EDL ENGINE]: Qualcomm QDLoader 9008 Driver Ready.\n[IC BIOS PROGRAMMER]: SPI/I2C EEPROM (CH341A/FT232H) Ready.\n[MTP MANAGER]: File Transfer Protocol Ready.\n[ADB SHELL]: Terminal Emulator Ready." />
               </ScrollView>
 
           </LinearLayout>
           XML
+
+      - name: Generate Official Gradle 8.5 Wrapper
+        run: |
+          gradle wrapper --gradle-version 8.5
+          chmod +x gradlew
 
       - name: Build Full Universal APK
         run: |
@@ -246,5 +237,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Universal-OTG-MTP-Toolkit-v3
+          name: Universal-OTG-BIOS-Programmer-v4
           path: app/build/outputs/apk/debug/app-debug.apk
