@@ -25,17 +25,24 @@ jobs:
           gradle-version: '8.5'
           cache-disabled: true
 
-      - name: Create Clean Project Files
+      - name: Create Complete Project Files
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
 
-          # 1. settings.gradle
+          # 1. gradle.properties (WAJIB UNTUK ANDROIDX)
+          cat << 'PROPS' > gradle.properties
+          android.useAndroidX=true
+          android.enableJetifier=true
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          PROPS
+
+          # 2. settings.gradle
           echo "rootProject.name = 'Universal-OTG-Toolkit'" > settings.gradle
           echo "include ':app'" >> settings.gradle
 
-          # 2. Root build.gradle
+          # 3. Root build.gradle
           cat << 'GRADLE_ROOT' > build.gradle
           buildscript {
               repositories {
@@ -54,7 +61,7 @@ jobs:
           }
           GRADLE_ROOT
 
-          # 3. App build.gradle
+          # 4. App build.gradle
           cat << 'GRADLE_APP' > app/build.gradle
           plugins {
               id 'com.android.application'
@@ -82,7 +89,7 @@ jobs:
           }
           GRADLE_APP
 
-          # 4. AndroidManifest.xml
+          # 5. AndroidManifest.xml
           cat << 'XML' > app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-feature android:name="android.hardware.usb.host" />
@@ -105,7 +112,7 @@ jobs:
           </manifest>
           XML
 
-          # 5. Colors & Themes
+          # 6. Colors & Themes
           cat << 'XML' > app/src/main/res/values/colors.xml
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
@@ -120,7 +127,7 @@ jobs:
           </resources>
           XML
 
-          # 6. MainActivity.java
+          # 7. MainActivity.java
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
@@ -181,7 +188,7 @@ jobs:
           }
           JAVA
 
-          # 7. activity_main.xml Layout
+          # 8. activity_main.xml Layout
           cat << 'XML' > app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -252,7 +259,7 @@ jobs:
 
       - name: Build Full Universal APK
         run: |
-          gradle assembleDebug --stacktrace
+          gradle assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
