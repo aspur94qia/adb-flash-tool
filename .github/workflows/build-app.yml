@@ -19,7 +19,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create Complete Project Files with IC BIOS Programmer
+      - name: Setup Gradle 8.5
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.5'
+
+      - name: Create Complete Project Files
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
@@ -61,7 +66,7 @@ jobs:
                   minSdk 21
                   targetSdk 34
                   versionCode 4
-                  versionName '4.0.0-Bios Programmer'
+                  versionName '4.0.0-BiosProgrammer'
               }
               buildTypes {
                   release {
@@ -76,7 +81,7 @@ jobs:
           }
           GRADLE_APP
 
-          # 4. AndroidManifest.xml (USB Host & Serial Permissions)
+          # 4. AndroidManifest.xml
           cat << 'XML' > app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-feature android:name="android.hardware.usb.host" />
@@ -107,13 +112,12 @@ jobs:
               <color name="card_bg">#1E1E1E</color>
               <color name="primary_accent">#00E676</color>
               <color name="secondary_accent">#2979FF</color>
-              <color name="bios_yellow">#FFD600</color>
               <color name="text_main">#FFFFFF</color>
               <color name="text_sub">#B0BEC5</color>
           </resources>
           XML
 
-          # 6. MainActivity.java (Tab Manager dengan IC BIOS Programmer Engine)
+          # 6. MainActivity.java
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
@@ -139,7 +143,7 @@ jobs:
                   tabLayout.addTab(tabLayout.newTab().setText("MTP File Manager"));
                   tabLayout.addTab(tabLayout.newTab().setText("ADB Shell"));
 
-                  statusIndicator.setText("STATUS USB: Waiting USB OTG / CH341A Programmer...");
+                  statusIndicator.setText("STATUS USB: Waiting USB OTG Connection...");
                   progressBar.setProgress(0);
 
                   tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -156,7 +160,7 @@ jobs:
           }
           JAVA
 
-          # 7. activity_main.xml Layout Presisi
+          # 7. activity_main.xml Layout
           cat << 'XML' > app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -225,14 +229,9 @@ jobs:
           </LinearLayout>
           XML
 
-      - name: Generate Official Gradle 8.5 Wrapper
-        run: |
-          gradle wrapper --gradle-version 8.5
-          chmod +x gradlew
-
       - name: Build Full Universal APK
         run: |
-          ./gradlew assembleDebug
+          gradle assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
