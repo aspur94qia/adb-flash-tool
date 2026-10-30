@@ -19,12 +19,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle 8.5
+      - name: Setup Gradle 8.5 (Cache Disabled)
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '8.5'
+          cache-disabled: true
 
-      - name: Create Complete Project Files v6
+      - name: Create Clean Project Files v6
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
@@ -119,7 +120,7 @@ jobs:
           </resources>
           XML
 
-          # 6. MainActivity.java (Semua Modul + Tab Panduan Interaktif)
+          # 6. MainActivity.java (Standard ASCII Strings)
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
@@ -156,15 +157,15 @@ jobs:
                       public void onTabSelected(TabLayout.Tab tab) {
                           int pos = tab.getPosition();
                           if (pos == 0) {
-                              statusIndicator.setText("MODE ACTIVE [PANDUAAN & ALAT]: Petunjuk Penggunaan");
+                              statusIndicator.setText("MODE ACTIVE [PANDUAN & ALAT]: Petunjuk Penggunaan");
                               consoleOutput.setText("[PANDUAN KONEKSI USB OTG]:\n" +
-                                      "1. Aktifkan 'Koneksi OTG' di Pengaturan HP Master.\n" +
+                                      "1. Aktifkan Koneksi OTG di Pengaturan HP Master.\n" +
                                       "2. Hubungkan Kabel OTG dari HP Master ke Perangkat Target / Adapter.\n\n" +
                                       "[ALAT YANG DIBUTUHKAN PER-TOOLS]:\n" +
-                                      "• Flasher OTG: Kabel Data OTG Type-C / Micro-USB.\n" +
-                                      "• IC BIOS Programmer: Adapter CH341A / FT232H + Clip SOP8/SOP16.\n" +
-                                      "• UART Serial Console: Modul USB-to-UART (CP2102/CH340/PL2303).\n" +
-                                      "• EDL & MTK BROM: Kabel USB Data / Testpoint Clip.\n\n" +
+                                      "- Flasher OTG: Kabel Data OTG Type-C / Micro-USB.\n" +
+                                      "- IC BIOS Programmer: Adapter CH341A / FT232H + Clip SOP8/SOP16.\n" +
+                                      "- UART Serial Console: Modul USB-to-UART (CP2102/CH340/PL2303).\n" +
+                                      "- EDL & MTK BROM: Kabel USB Data / Testpoint Clip.\n\n" +
                                       "[CARA PENGGUNAAN]: Pilih Tab sesuai kebutuhan fungsi service.");
                           } else {
                               statusIndicator.setText("MODE ACTIVE [" + tab.getText() + "]: Ready");
@@ -243,7 +244,7 @@ jobs:
                       android:textColor="#00FF00"
                       android:fontFamily="monospace"
                       android:textSize="12sp"
-                      android:text="[PANDUAN KONEKSI USB OTG]:\n1. Aktifkan 'Koneksi OTG' di Pengaturan HP Master.\n2. Hubungkan Kabel OTG dari HP Master ke Perangkat Target / Adapter.\n\n[ALAT YANG DIBUTUHKAN PER-TOOLS]:\n• Flasher OTG: Kabel Data OTG Type-C / Micro-USB.\n• IC BIOS Programmer: Adapter CH341A / FT232H + Clip SOP8/SOP16.\n• UART Serial Console: Modul USB-to-UART (CP2102/CH340/PL2303).\n• EDL &amp; MTK BROM: Kabel USB Data / Testpoint Clip.\n\n[CARA PENGGUNAAN]: Pilih Tab sesuai kebutuhan fungsi service." />
+                      android:text="[PANDUAN KONEKSI USB OTG]:\n1. Aktifkan Koneksi OTG di Pengaturan HP Master.\n2. Hubungkan Kabel OTG dari HP Master ke Perangkat Target / Adapter.\n\n[ALAT YANG DIBUTUHKAN PER-TOOLS]:\n- Flasher OTG: Kabel Data OTG Type-C / Micro-USB.\n- IC BIOS Programmer: Adapter CH341A / FT232H + Clip SOP8/SOP16.\n- UART Serial Console: Modul USB-to-UART (CP2102/CH340/PL2303).\n- EDL &amp; MTK BROM: Kabel USB Data / Testpoint Clip.\n\n[CARA PENGGUNAAN]: Pilih Tab sesuai kebutuhan fungsi service." />
               </ScrollView>
 
           </LinearLayout>
