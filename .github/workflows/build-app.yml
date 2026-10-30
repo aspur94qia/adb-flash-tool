@@ -19,13 +19,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle 8.5 (Cache Disabled)
+      - name: Setup Gradle 8.5
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '8.5'
           cache-disabled: true
 
-      - name: Create Clean Project Files v6
+      - name: Create Clean Project Files
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
@@ -93,7 +93,7 @@ jobs:
               <application
                   android:allowBackup="true"
                   android:icon="@mipmap/ic_launcher"
-                  android:label="Universal Flasher &amp; Hardware Toolkit"
+                  android:label="Universal Flasher Toolkit"
                   android:theme="@style/Theme.Material3.DayNight.NoActionBar">
                   <activity android:name=".MainActivity" android:exported="true">
                       <intent-filter>
@@ -120,7 +120,7 @@ jobs:
           </resources>
           XML
 
-          # 6. MainActivity.java (Standard ASCII Strings)
+          # 6. MainActivity.java
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
@@ -252,7 +252,7 @@ jobs:
 
       - name: Build Full Universal APK
         run: |
-          gradle assembleDebug
+          gradle assembleDebug --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
