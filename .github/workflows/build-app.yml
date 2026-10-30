@@ -19,17 +19,33 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create Complete Project Files
+      - name: Create Complete Project Files & Setup Fixed Gradle 8.5
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
+          mkdir -p gradle/wrapper
 
-          # 1. settings.gradle (Wajib agar Gradle mengenali modul :app)
-          echo "rootProject.name = 'adb-flash-tool'" > settings.gradle
+          # 1. Setup Manual Gradle 8.5 Wrapper Properties (Mencegah Gradle 9.x dipanggil)
+          cat << 'PROPS' > gradle/wrapper/gradle-wrapper.properties
+          distributionBase=GRADLE_USER_HOME
+          distributionPath=wrapper/dists
+          distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-bin.zip
+          networkTimeout=10000
+          validateDistributionUrl=true
+          zipStoreBase=GRADLE_USER_HOME
+          zipStorePath=wrapper/dists
+          PROPS
+
+          # 2. Download gradlew stub
+          curl -sSL -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradlew
+          chmod +x gradlew
+
+          # 3. settings.gradle
+          echo "rootProject.name = 'Universal-OTG-Toolkit'" > settings.gradle
           echo "include ':app'" >> settings.gradle
 
-          # 2. Root build.gradle
+          # 4. Root build.gradle
           cat << 'GRADLE_ROOT' > build.gradle
           buildscript {
               repositories {
@@ -48,7 +64,7 @@ jobs:
           }
           GRADLE_ROOT
 
-          # 3. App build.gradle
+          # 5. App build.gradle
           cat << 'GRADLE_APP' > app/build.gradle
           plugins {
               id 'com.android.application'
@@ -76,7 +92,7 @@ jobs:
           }
           GRADLE_APP
 
-          # 4. AndroidManifest.xml
+          # 6. AndroidManifest.xml
           cat << 'XML' > app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-feature android:name="android.hardware.usb.host" />
@@ -99,7 +115,7 @@ jobs:
           </manifest>
           XML
 
-          # 5. Color Theme
+          # 7. Colors & Themes
           cat << 'XML' > app/src/main/res/values/colors.xml
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
@@ -112,7 +128,7 @@ jobs:
           </resources>
           XML
 
-          # 6. MainActivity.java
+          # 8. MainActivity.java
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
@@ -154,7 +170,7 @@ jobs:
           }
           JAVA
 
-          # 7. activity_main.xml Layout
+          # 9. activity_main.xml Layout
           cat << 'XML' > app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -222,12 +238,8 @@ jobs:
           </LinearLayout>
           XML
 
-          # Generate Gradle Wrapper 8.5 (Kompatibel dengan AGP 8.1.1)
-          gradle wrapper --gradle-version 8.5
-
       - name: Build Full Universal APK
         run: |
-          chmod +x gradlew
           ./gradlew assembleDebug
 
       - name: Upload APK Artifact
