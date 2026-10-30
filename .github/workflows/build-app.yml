@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -22,50 +22,23 @@ jobs:
       - name: Setup Android SDK Tools
         uses: android-actions/setup-android@v3
 
-      - name: Create Full Universal Project Structure
+      - name: Create Project Files
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
-          
-          cat << 'GRADLE_ROOT' > build.gradle
-          buildscript {
-              repositories { google(); mavenCentral() }
-              dependencies { classpath 'com.android.tools.build:gradle:8.1.1' }
-          }
-          allprojects {
-              repositories { google(); mavenCentral() }
-          }
-          GRADLE_ROOT
 
-          cat << 'GRADLE_APP' > app/build.gradle
-          plugins {
-              id 'com.android.application'
-          }
-          android {
-              namespace 'com.universal.otgflasher'
-              compileSdk 34
-              defaultConfig {
-                  applicationId "com.universal.otgflasher"
-                  minSdk 21
-                  targetSdk 34
-                  versionCode 3
-                  versionName "3.0.0-FullUniversal"
-              }
-              buildTypes {
-                  release {
-                      minifyEnabled false
-                  }
-              }
-          }
-          dependencies {
-              implementation 'androidx.appcompat:appcompat:1.6.1'
-              implementation 'com.google.android.material:material:1.9.0'
-              implementation 'androidx.viewpager2:viewpager2:1.0.0'
-          }
-          GRADLE_APP
+          # 1. Root build.gradle
+          echo "buildscript { repositories { google(); mavenCentral() }; dependencies { classpath 'com.android.tools.build:gradle:8.1.1' } }" > build.gradle
+          echo "allprojects { repositories { google(); mavenCentral() } }" >> build.gradle
 
-          cat << 'MANIFEST' > app/src/main/AndroidManifest.xml
+          # 2. App build.gradle
+          echo "plugins { id 'com.android.application' }" > app/build.gradle
+          echo "android { namespace 'com.universal.otgflasher'; compileSdk 34; defaultConfig { applicationId 'com.universal.otgflasher'; minSdk 21; targetSdk 34; versionCode 3; versionName '3.0.0-FullUniversal' } }" >> app/build.gradle
+          echo "dependencies { implementation 'androidx.appcompat:appcompat:1.6.1'; implementation 'com.google.android.material:material:1.9.0'; implementation 'androidx.viewpager2:viewpager2:1.0.0' }" >> app/build.gradle
+
+          # 3. AndroidManifest.xml
+          cat << 'XML' > app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-feature android:name="android.hardware.usb.host" />
               <uses-permission android:name="android.permission.USB_PERMISSION" />
@@ -85,9 +58,10 @@ jobs:
                   </activity>
               </application>
           </manifest>
-          MANIFEST
+          XML
 
-          cat << 'COLORS' > app/src/main/res/values/colors.xml
+          # 4. Color Theme
+          cat << 'XML' > app/src/main/res/values/colors.xml
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
               <color name="bg_dark">#121212</color>
@@ -97,8 +71,9 @@ jobs:
               <color name="text_main">#FFFFFF</color>
               <color name="text_sub">#B0BEC5</color>
           </resources>
-          COLORS
+          XML
 
+          # 5. MainActivity.java
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
@@ -140,7 +115,8 @@ jobs:
           }
           JAVA
 
-          cat << 'LAYOUT' > app/src/main/res/layout/activity_main.xml
+          # 6. activity_main.xml Layout
+          cat << 'XML' > app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -205,7 +181,7 @@ jobs:
               </ScrollView>
 
           </LinearLayout>
-          LAYOUT
+          XML
 
           gradle wrapper
 
