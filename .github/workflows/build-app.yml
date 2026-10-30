@@ -25,13 +25,14 @@ jobs:
           gradle-version: '8.5'
           cache-disabled: true
 
-      - name: Create Complete Project Files
+      - name: Create Complete Project Files with Valid Resources
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
+          mkdir -p app/src/main/res/mipmap-hdpi
 
-          # 1. gradle.properties (WAJIB UNTUK ANDROIDX)
+          # 1. gradle.properties
           cat << 'PROPS' > gradle.properties
           android.useAndroidX=true
           android.enableJetifier=true
@@ -89,7 +90,7 @@ jobs:
           }
           GRADLE_APP
 
-          # 5. AndroidManifest.xml
+          # 5. AndroidManifest.xml (Menggunakan Ikon Bawaan Android System agar tidak error)
           cat << 'XML' > app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-feature android:name="android.hardware.usb.host" />
@@ -99,7 +100,7 @@ jobs:
               <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
               <application
                   android:allowBackup="true"
-                  android:icon="@mipmap/ic_launcher"
+                  android:icon="@android:drawable/ic_menu_manage"
                   android:label="Universal Flasher Toolkit"
                   android:theme="@style/Theme.Material3.DayNight.NoActionBar">
                   <activity android:name=".MainActivity" android:exported="true">
