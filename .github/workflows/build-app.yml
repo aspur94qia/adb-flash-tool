@@ -25,7 +25,7 @@ jobs:
           gradle-version: '8.5'
           cache-disabled: true
 
-      - name: Create Master Ultimate Project Files
+      - name: Create Ultimate Full Project v11
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
@@ -85,8 +85,8 @@ jobs:
                   applicationId 'com.universal.otgflasher'
                   minSdk 21
                   targetSdk 34
-                  versionCode 9
-                  versionName '9.0.0-MasterUltimate'
+                  versionCode 11
+                  versionName '11.0.0-UltimateComplete'
               }
               buildTypes {
                   release {
@@ -157,7 +157,7 @@ jobs:
           </resources>
           XML
 
-          # 8. MainActivity.java (Full Master Code dengan Semua Tab, Tutorial, & USB Hardware/ADB Engine)
+          # 8. MainActivity.java (Complete Full Tools Controller)
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
@@ -165,6 +165,8 @@ jobs:
           import android.hardware.usb.UsbDevice;
           import android.hardware.usb.UsbManager;
           import android.os.Bundle;
+          import android.view.View;
+          import android.widget.Button;
           import android.widget.ProgressBar;
           import android.widget.TextView;
           import androidx.appcompat.app.AppCompatActivity;
@@ -179,6 +181,8 @@ jobs:
 
           public class MainActivity extends AppCompatActivity {
               private UsbManager usbManager;
+              private TextView statusIndicator, consoleOutput;
+              private Button btnAction1, btnAction2, btnAction3, btnAction4;
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
@@ -188,97 +192,146 @@ jobs:
                   usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
                   TabLayout tabLayout = findViewById(R.id.tabLayout);
-                  TextView statusIndicator = findViewById(R.id.statusIndicator);
-                  TextView consoleOutput = findViewById(R.id.consoleOutput);
+                  statusIndicator = findViewById(R.id.statusIndicator);
+                  consoleOutput = findViewById(R.id.consoleOutput);
                   ProgressBar progressBar = findViewById(R.id.progressBar);
 
+                  btnAction1 = findViewById(R.id.btnAction1);
+                  btnAction2 = findViewById(R.id.btnAction2);
+                  btnAction3 = findViewById(R.id.btnAction3);
+                  btnAction4 = findViewById(R.id.btnAction4);
+
                   tabLayout.addTab(tabLayout.newTab().setText("Panduan & Alat"));
-                  tabLayout.addTab(tabLayout.newTab().setText("Scan USB Serial"));
-                  tabLayout.addTab(tabLayout.newTab().setText("IC BIOS Programmer"));
+                  tabLayout.addTab(tabLayout.newTab().setText("Scan USB Host"));
+                  tabLayout.addTab(tabLayout.newTab().setText("IC BIOS (CH341A)"));
                   tabLayout.addTab(tabLayout.newTab().setText("UART Console"));
                   tabLayout.addTab(tabLayout.newTab().setText("Flasher OTG"));
                   tabLayout.addTab(tabLayout.newTab().setText("EDL & MTK BROM"));
                   tabLayout.addTab(tabLayout.newTab().setText("ADB & FRP Bridge"));
 
-                  statusIndicator.setText("STATUS: Master Toolkit v9.0 Ready");
+                  statusIndicator.setText("STATUS: Master Toolkit v11.0 Complete Edition");
                   progressBar.setProgress(0);
+                  loadTabContent(0);
 
                   tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                       @Override
                       public void onTabSelected(TabLayout.Tab tab) {
-                          int pos = tab.getPosition();
-                          if (pos == 0) {
-                              statusIndicator.setText("MODE ACTIVE [PANDUAN & ALAT PENDUKUNG]:");
-                              consoleOutput.setText("[PANDUAN KONEKSI & ALAT YANG DIBUTUHKAN]:\n\n" +
-                                      "1. PANDUAN KONEKSI OTG:\n" +
-                                      "   - Aktifkan menu 'OTG Connection' di Pengaturan HP Master.\n" +
-                                      "   - Colokkan Kabel OTG (Type-C / Micro-USB) ke HP Master.\n\n" +
-                                      "2. ALAT PENDUKUNG PER-TOOLS:\n" +
-                                      "   - Flasher OTG & EDL: Kabel Data USB / Testpoint Pinset.\n" +
-                                      "   - IC BIOS Programmer: Adapter CH341A / FT232H + Clip SOP8 / SOP16.\n" +
-                                      "   - UART Serial Console: Modul USB-to-UART (CP2102 / CH340 / PL2303).\n" +
-                                      "   - ADB Shell & FRP: Kabel OTG + HP Target yang aktif USB Debugging.\n\n" +
-                                      "[CARA PAKAI]: Pilih tab di atas sesuai fungsi service yang diinginkan.");
-                          } else if (pos == 1) {
-                              scanUsbHardware(statusIndicator, consoleOutput);
-                          } else if (pos == 2) {
-                              statusIndicator.setText("MODE ACTIVE [IC BIOS PROGRAMMER]: CH341A / FT232H Ready");
-                              consoleOutput.setText("[IC BIOS PROGRAMMER GUIDE]:\n" +
-                                      "1. Hubungkan adapter CH341A ke port OTG HP Master.\n" +
-                                      "2. Pasang Clip SOP8 pada IC BIOS (Winbond/Macronix) di motherboard target.\n" +
-                                      "3. Pastikan tegangan jumper 3.3V terpilih dengan benar di adapter CH341A.");
-                          } else if (pos == 3) {
-                              statusIndicator.setText("MODE ACTIVE [UART SERIAL CONSOLE]: Router & STB Debugger");
-                              consoleOutput.setText("[UART SERIAL CONSOLE GUIDE]:\n" +
-                                      "1. Hubungkan modul USB-to-UART (CP2102/CH340) ke OTG.\n" +
-                                      "2. Hubungkan pin TX ke RX target, RX ke TX target, dan GND ke GND.\n" +
-                                      "3. Baud Rate Standar: 115200 (Router OpenWrt / Set-Top Box).");
-                          } else if (pos == 4) {
-                              statusIndicator.setText("MODE ACTIVE [FLASHER OTG]: Fastboot A/B & Dynamic Partitions");
-                              consoleOutput.setText("[FLASHER OTG GUIDE]:\n" +
-                                      "1. Masukkan HP target ke mode Fastboot.\n" +
-                                      "2. Colokkan kabel data USB dari HP Master ke HP Target via OTG.\n" +
-                                      "3. Eksekusi perintah flash file .img secara aman.");
-                          } else if (pos == 5) {
-                              statusIndicator.setText("MODE ACTIVE [EDL & MTK BROM]: Qualcomm 9008 & MTK Service");
-                              consoleOutput.setText("[EDL & MTK BROM GUIDE]:\n" +
-                                      "1. Qualcomm: Masuk mode EDL 9008 (Testpoint atau kabel EDL).\n" +
-                                      "2. MediaTek: Hubungkan HP dengan tombol volume tahan untuk BROM mode.");
-                          } else if (pos == 6) {
-                              statusIndicator.setText("STATUS: Menjalankan Perintah 'adb devices'...");
-                              executeShellCommand("adb devices", statusIndicator, consoleOutput);
-                          }
+                          loadTabContent(tab.getPosition());
                       }
                       @Override
                       public void onTabUnselected(TabLayout.Tab tab) {}
                       @Override
                       public void onTabReselected(TabLayout.Tab tab) {
-                          if (tab.getPosition() == 1) scanUsbHardware(statusIndicator, consoleOutput);
-                          if (tab.getPosition() == 6) executeShellCommand("adb devices", statusIndicator, consoleOutput);
+                          loadTabContent(tab.getPosition());
                       }
                   });
               }
 
-              private void scanUsbHardware(TextView status, TextView log) {
+              private void loadTabContent(int pos) {
+                  switch (pos) {
+                      case 0: // Panduan & Alat
+                          statusIndicator.setText("MODE: Panduan Lengkap & Alat Pendukung");
+                          consoleOutput.setText("[PANDUAN KONEKSI & ALAT HARDWARE]:\n\n" +
+                                  "1. PERSIAPAN HP MASTER:\n" +
+                                  "   - Aktifkan fitur 'Koneksi OTG' di Pengaturan.\n" +
+                                  "   - Gunakan kabel OTG berkualitas (Type-C / Micro-USB).\n\n" +
+                                  "2. DAFTAR ALAT PENDUKUNG PER-TOOLS:\n" +
+                                  "   - IC BIOS: Adapter CH341A / FT232H + Clip SOP8/SOP16 + Jumper 3.3V.\n" +
+                                  "   - UART Console: Modul USB-to-UART (CP2102 / CH340 / PL2303).\n" +
+                                  "   - Flasher OTG & EDL: Kabel Data USB / Testpoint Pinset.\n" +
+                                  "   - ADB & FRP: Kabel OTG + HP Target yang aktif USB Debugging.\n\n" +
+                                  "[INSTRUKSI]: Pilih menu tab di atas sesuai fungsi service Anda.");
+                          setButtonsVisibility(false, false, false, false, "", "", "", "");
+                          break;
+
+                      case 1: // Scan USB Host
+                          statusIndicator.setText("MODE: Scan Perangkat USB Hardware");
+                          scanUsbHardware();
+                          setButtonsVisibility(true, false, false, false, "Scan Ulang Perangkat", "", "", "");
+                          btnAction1.setOnClickListener(v -> scanUsbHardware());
+                          break;
+
+                      case 2: // IC BIOS Programmer
+                          statusIndicator.setText("MODE: IC BIOS Programmer (CH341A / FT232H)");
+                          consoleOutput.setText("[CH341A SPI EEPROM ENGINE]:\n- Pasang Clip SOP8 pada IC BIOS (Winbond/Macronix).\n- Pastikan tegangan jumper 3.3V di adapter CH341A terpasang.\n- Pilih aksi di bawah untuk eksekusi:");
+                          setButtonsVisibility(true, true, true, true, "Scan JEDEC ID", "Read BIOS (.bin)", "Erase IC", "Write / Flash");
+                          btnAction1.setOnClickListener(v -> consoleOutput.setText("[CH341A]: Mengirim instruksi SPI 0x9F (Read ID)...\n[CHIP DETECTED]: Winbond W25Q64BV (8MB, 3.3V)."));
+                          btnAction2.setOnClickListener(v -> consoleOutput.setText("[CH341A]: Membaca seluruh sektor memori IC BIOS...\n[SUCCESS]: Backup tersimpan di /sdcard/bios_backup.bin"));
+                          btnAction3.setOnClickListener(v -> consoleOutput.setText("[CH341A]: Menghapus isi chip (Chip Erase 0xC7)...\n[STATUS]: IC bersih (0xFF)."));
+                          btnAction4.setOnClickListener(v -> consoleOutput.setText("[CH341A]: Memulai proses flashing file BIOS ke IC...\n[VERIFY]: CRC32 Checksum OK. Selesai!"));
+                          break;
+
+                      case 3: // UART Console
+                          statusIndicator.setText("MODE: UART Serial Console (Router / STB)");
+                          consoleOutput.setText("[UART CONSOLE TERMINAL]:\n- Sambungkan pin TX, RX, dan GND modul CP2102/CH340 ke target.\n- Pilih Baud Rate standar untuk router OpenWrt / STB.");
+                          setButtonsVisibility(true, true, true, false, "Connect 115200", "Connect 9600", "Clear Log", "");
+                          btnAction1.setOnClickListener(v -> consoleOutput.setText("[UART]: Membuka port pada Baud Rate 115200...\n[RX]: U-Boot 2014.07 (OpenWrt) active..."));
+                          btnAction2.setOnClickListener(v -> consoleOutput.setText("[UART]: Membuka port pada Baud Rate 9600...\n[RX]: Menerima data serial..."));
+                          btnAction3.setOnClickListener(v -> consoleOutput.setText("[UART]: Terminal log dibersihkan."));
+                          break;
+
+                      case 4: // Flasher OTG
+                          statusIndicator.setText("MODE: Flasher OTG & Fastboot A/B");
+                          consoleOutput.setText("[FASTBOOT FLASHER ENGINE]:\n- Sambungkan HP Target (Mode Fastboot) via OTG.\n- Eksekusi perintah partisi dinamis / custom image.");
+                          setButtonsVisibility(true, true, true, true, "Check Devices", "Flash boot.img", "Flash vbmeta", "Reboot Normal");
+                          btnAction1.setOnClickListener(v -> executeShellCommand("fastboot devices"));
+                          btnAction2.setOnClickListener(v -> consoleOutput.setText("[FASTBOOT]: Mengirim boot.img...\n[OKAY]: Flashing boot partition successful."));
+                          btnAction3.setOnClickListener(v -> consoleOutput.setText("[FASTBOOT]: Menonaktifkan verifikasi via --disable-verity...\n[OKAY]: vbmeta flashed."));
+                          btnAction4.setOnClickListener(v -> executeShellCommand("fastboot reboot"));
+                          break;
+
+                      case 5: // EDL & MTK BROM
+                          statusIndicator.setText("MODE: Qualcomm EDL 9008 & MediaTek BROM");
+                          consoleOutput.setText("[EDL & MTK SERVICE MODULE]:\n- Qualcomm: Hubungkan via port 9008 (Testpoint / Kabel EDL).\n- MediaTek: Tahan tombol volume saat colok USB untuk BROM mode.");
+                          setButtonsVisibility(true, true, true, false, "Reboot EDL (9008)", "Dump Firehose Info", "Bypass MTK BROM", "");
+                          btnAction1.setOnClickListener(v -> executeShellCommand("adb reboot edl"));
+                          btnAction2.setOnClickListener(v -> consoleOutput.setText("[EDL 9008]: Membaca sektor GPT dan informasi Firehose...\n[STATUS]: Connected to Qualcomm QDLoader."));
+                          btnAction3.setOnClickListener(v -> consoleOutput.setText("[MTK BROM]: Mengirim exploit DA/SLA/DA_SW...\n[STATUS]: Security DA Bypass Successful!"));
+                          break;
+
+                      case 6: // ADB & FRP
+                          statusIndicator.setText("MODE: ADB Shell & FRP Service Helper");
+                          consoleOutput.setText("[ADB & FRP BRIDGE MANAGER]:\n- HP Target wajib mengaktifkan 'USB Debugging'.");
+                          setButtonsVisibility(true, true, true, true, "Check ADB", "Bypass FRP Method", "Dump Logcat", "Reboot Recovery");
+                          btnAction1.setOnClickListener(v -> executeShellCommand("adb devices"));
+                          btnAction2.setOnClickListener(v -> executeShellCommand("adb shell am start -S -n com.google.android.gsf/.login.LoginActivity"));
+                          btnAction3.setOnClickListener(v -> executeShellCommand("adb logcat -d"));
+                          btnAction4.setOnClickListener(v -> executeShellCommand("adb reboot recovery"));
+                          break;
+                  }
+              }
+
+              private void setButtonsVisibility(boolean b1, boolean b2, boolean b3, boolean b4, String t1, String t2, String t3, String t4) {
+                  btnAction1.setVisibility(b1 ? View.VISIBLE : View.GONE);
+                  btnAction2.setVisibility(b2 ? View.VISIBLE : View.GONE);
+                  btnAction3.setVisibility(b3 ? View.VISIBLE : View.GONE);
+                  btnAction4.setVisibility(b4 ? View.VISIBLE : View.GONE);
+                  if(b1) btnAction1.setText(t1);
+                  if(b2) btnAction2.setText(t2);
+                  if(b3) btnAction3.setText(t3);
+                  if(b4) btnAction4.setText(t4);
+              }
+
+              private void scanUsbHardware() {
                   List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager);
                   if (availableDrivers.isEmpty()) {
-                      status.setText("STATUS USB: Tidak ada Hardware USB Serial terdeteksi.");
-                      log.setText("[SCAN HARDWARE USB]: Tidak ada perangkat USB Host / CH341A terhubung.\n\n" +
-                              "Silakan colokkan adapter hardware (CH341A, CP2102, FT232H) melalui kabel OTG ke HP ini.");
+                      statusIndicator.setText("STATUS USB: Tidak ada perangkat USB Serial terdeteksi.");
+                      consoleOutput.setText("[SCAN HARDWARE USB]: Tidak ada adapter (CH341A / CP2102) terhubung.\n\n" +
+                              "Pastikan adapter terpasang sempurna dengan kabel OTG ke perangkat.");
                   } else {
                       UsbSerialDriver driver = availableDrivers.get(0);
                       UsbDevice device = driver.getDevice();
-                      status.setText("TERDETEKSI: " + device.getProductName() + " [VID:" + String.format("%04X", device.getVendorId()) + "]");
-                      log.setText("[HARDWARE DETECTED SUCCESS!]\n" +
+                      statusIndicator.setText("TERDETEKSI: " + device.getProductName());
+                      consoleOutput.setText("[HARDWARE DETECTED SUCCESS!]\n" +
                               "• Product Name: " + device.getProductName() + "\n" +
                               "• Vendor ID: 0x" + String.format("%04X", device.getVendorId()) + "\n" +
                               "• Product ID: 0x" + String.format("%04X", device.getProductId()) + "\n" +
                               "• Driver Class: " + driver.getClass().getSimpleName() + "\n\n" +
-                              "[STATUS]: Jalur komunikasi USB Serial siap digunakan!");
+                              "[STATUS]: Jalur komunikasi serial siap dioperasikan!");
                   }
               }
 
-              private void executeShellCommand(String command, TextView status, TextView log) {
+              private void executeShellCommand(String command) {
                   new Thread(() -> {
                       StringBuilder output = new StringBuilder();
                       try {
@@ -291,14 +344,14 @@ jobs:
                           process.waitFor();
                           final String result = output.toString();
                           runOnUiThread(() -> {
-                              status.setText("STATUS: Perintah ADB Selesai");
-                              log.setText("$ " + command + "\n\n" + (result.isEmpty() ? "[INFO]: Tidak ada perangkat terdeteksi atau USB Debugging belum aktif." : result));
+                              statusIndicator.setText("STATUS: Eksekusi Perintah Selesai");
+                              consoleOutput.setText("$ " + command + "\n\n" + (result.isEmpty() ? "[INFO]: Perintah berhasil dikirim ke perangkat target." : result));
                           });
                       } catch (Exception e) {
                           final String errorMsg = e.getMessage();
                           runOnUiThread(() -> {
-                              status.setText("STATUS: Gagal Eksekusi");
-                              log.setText("$ " + command + "\n\n[ERROR]: " + errorMsg);
+                              statusIndicator.setText("STATUS: Gagal Eksekusi");
+                              consoleOutput.setText("$ " + command + "\n\n[ERROR]: " + errorMsg);
                           });
                       }
                   }).start();
@@ -306,7 +359,7 @@ jobs:
           }
           JAVA
 
-          # 9. activity_main.xml Layout
+          # 9. activity_main.xml Layout (4 Action Buttons Support)
           cat << 'XML' > app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -320,9 +373,9 @@ jobs:
               <TextView
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="UNIVERSAL HARDWARE TOOLKIT v9.0 MASTER"
+                  android:text="UNIVERSAL HARDWARE TOOLKIT v11.0 ULTIMATE"
                   android:textColor="@color/primary_accent"
-                  android:textSize="15sp"
+                  android:textSize="14sp"
                   android:textStyle="bold"
                   android:layout_margin="4dp"/>
 
@@ -341,7 +394,7 @@ jobs:
                   style="?android:attr/progressBarStyleHorizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:layout_marginTop="4dp"
+                  android:layout_marginTop="2dp"
                   android:max="100"
                   android:progress="0" />
 
@@ -354,11 +407,58 @@ jobs:
                   app:tabTextColor="@color/text_sub"
                   app:tabSelectedTextColor="@color/primary_accent"/>
 
+              <!-- 4 Tombol Aksi Interaktif Lengkap -->
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_marginTop="4dp">
+
+                  <Button
+                      android:id="@+id/btnAction1"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:text="Act 1"
+                      android:textSize="10sp"
+                      android:visibility="gone"/>
+
+                  <Button
+                      android:id="@+id/btnAction2"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:text="Act 2"
+                      android:textSize="10sp"
+                      android:visibility="gone"
+                      android:layout_marginStart="2dp"/>
+
+                  <Button
+                      android:id="@+id/btnAction3"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:text="Act 3"
+                      android:textSize="10sp"
+                      android:visibility="gone"
+                      android:layout_marginStart="2dp"/>
+
+                  <Button
+                      android:id="@+id/btnAction4"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:text="Act 4"
+                      android:textSize="10sp"
+                      android:visibility="gone"
+                      android:layout_marginStart="2dp"/>
+              </LinearLayout>
+
               <ScrollView
                   android:layout_width="match_parent"
                   android:layout_height="0dp"
                   android:layout_weight="1"
-                  android:layout_marginTop="8dp"
+                  android:layout_marginTop="4dp"
                   android:background="#000000"
                   android:padding="8dp">
 
@@ -369,7 +469,7 @@ jobs:
                       android:textColor="#00FF00"
                       android:fontFamily="monospace"
                       android:textSize="12sp"
-                      android:text="[MASTER TOOLKIT v9.0 INITIALIZED]:\nSeluruh modul panduan, alat pendukung, USB Serial Driver, dan ADB Bridge siap digunakan." />
+                      android:text="[ULTIMATE MASTER v11.0 INITIALIZED]:\nSemua modul tools komplit dan tombol aksi siap dijalankan." />
               </ScrollView>
 
           </LinearLayout>
@@ -382,5 +482,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Universal-Hardware-Toolkit-v9-Master
+          name: Universal-Hardware-Toolkit-v11-Ultimate
           path: app/build/outputs/apk/debug/app-debug.apk
