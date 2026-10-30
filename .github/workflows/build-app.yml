@@ -25,12 +25,11 @@ jobs:
           gradle-version: '8.5'
           cache-disabled: true
 
-      - name: Create Complete Project Files with Real USB Serial Drivers
+      - name: Create Project Files with ADB/Fastboot Executor Engine
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
-          mkdir -p app/src/main/res/xml
 
           # 1. gradle.properties
           cat << 'PROPS' > gradle.properties
@@ -39,7 +38,7 @@ jobs:
           org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
           PROPS
 
-          # 2. settings.gradle (Menambahkan JitPack Repository untuk usb-serial-for-android)
+          # 2. settings.gradle
           cat << 'SETTINGS' > settings.gradle
           pluginManagement {
               repositories {
@@ -73,7 +72,7 @@ jobs:
           }
           GRADLE_ROOT
 
-          # 4. App build.gradle (Import Library USB Serial Asli)
+          # 4. App build.gradle
           cat << 'GRADLE_APP' > app/build.gradle
           plugins {
               id 'com.android.application'
@@ -85,8 +84,8 @@ jobs:
                   applicationId 'com.universal.otgflasher'
                   minSdk 21
                   targetSdk 34
-                  versionCode 7
-                  versionName '7.0.0-RealDriverEngine'
+                  versionCode 8
+                  versionName '8.0.0-AdbBridgeEngine'
               }
               buildTypes {
                   release {
@@ -98,28 +97,11 @@ jobs:
               implementation 'androidx.appcompat:appcompat:1.6.1'
               implementation 'com.google.android.material:material:1.9.0'
               implementation 'androidx.viewpager2:viewpager2:1.0.0'
-              
-              // Library Driver Hardware USB Native untuk CH341A, FT232H, CP2102, CH340, PL2303
               implementation 'com.github.mik3y:usb-serial-for-android:3.8.0'
           }
           GRADLE_APP
 
-          # 5. Config USB Device Filter (device_filter.xml)
-          cat << 'XML' > app/src/main/res/xml/device_filter.xml
-          <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-              <!-- CH341A / CH340 Series (Vendor ID: 0x1a86) -->
-              <usb-device vendor-id="6790" />
-              <!-- FT232H / FTDI Series (Vendor ID: 0x0403) -->
-              <usb-device vendor-id="1027" />
-              <!-- CP2102 Silicon Labs (Vendor ID: 0x10c4) -->
-              <usb-device vendor-id="4292" />
-              <!-- PL2303 Prolific (Vendor ID: 0x067b) -->
-              <usb-device vendor-id="1659" />
-          </resources>
-          XML
-
-          # 6. AndroidManifest.xml (Mendaftarkan USB Intent Filter)
+          # 5. AndroidManifest.xml
           cat << 'XML' > app/src/main/AndroidManifest.xml
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-feature android:name="android.hardware.usb.host" android:required="true" />
@@ -137,18 +119,12 @@ jobs:
                           <action android:name="android.intent.action.MAIN" />
                           <category android:name="android.intent.category.LAUNCHER" />
                       </intent-filter>
-                      <intent-filter>
-                          <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-                      </intent-filter>
-                      <meta-data
-                          android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                          android:resource="@xml/device_filter" />
                   </activity>
               </application>
           </manifest>
           XML
 
-          # 7. Colors & Themes
+          # 6. Colors & Themes
           cat << 'XML' > app/src/main/res/values/colors.xml
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
@@ -163,102 +139,111 @@ jobs:
           </resources>
           XML
 
-          # 8. MainActivity.java (Engine Deteksi Hardware USB Host Real)
+          # 7. MainActivity.java (ADB & Fastboot Local Shell Bridge)
           cat << 'JAVA' > app/src/main/java/com/universal/otgflasher/MainActivity.java
           package com.universal.otgflasher;
 
-          import android.content.Context;
-          import android.hardware.usb.UsbDevice;
-          import android.hardware.usb.UsbManager;
           import android.os.Bundle;
           import android.widget.ProgressBar;
           import android.widget.TextView;
           import androidx.appcompat.app.AppCompatActivity;
 
           import com.google.android.material.tabs.TabLayout;
-          import com.hoho.android.usbserial.driver.UsbSerialDriver;
-          import com.hoho.android.usbserial.driver.UsbSerialProber;
 
-          import java.util.List;
+          import java.io.BufferedReader;
+          import java.io.InputStreamReader;
 
           public class MainActivity extends AppCompatActivity {
-              private UsbManager usbManager;
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
                   setContentView(R.layout.activity_main);
 
-                  usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-
                   TabLayout tabLayout = findViewById(R.id.tabLayout);
                   TextView statusIndicator = findViewById(R.id.statusIndicator);
                   TextView consoleOutput = findViewById(R.id.consoleOutput);
                   ProgressBar progressBar = findViewById(R.id.progressBar);
 
-                  tabLayout.addTab(tabLayout.newTab().setText("Panduan & Alat"));
-                  tabLayout.addTab(tabLayout.newTab().setText("Scan Hardware USB"));
-                  tabLayout.addTab(tabLayout.newTab().setText("IC BIOS Programmer"));
-                  tabLayout.addTab(tabLayout.newTab().setText("UART Serial Console"));
-                  tabLayout.addTab(tabLayout.newTab().setText("Flasher OTG"));
-                  tabLayout.addTab(tabLayout.newTab().setText("EDL & MTK BROM"));
-                  tabLayout.addTab(tabLayout.newTab().setText("ADB Shell & FRP"));
+                  tabLayout.addTab(tabLayout.newTab().setText("Panduan ADB Mode"));
+                  tabLayout.addTab(tabLayout.newTab().setText("Cek Perangkat ADB"));
+                  tabLayout.addTab(tabLayout.newTab().setText("Fastboot Devices"));
+                  tabLayout.addTab(tabLayout.newTab().setText("Reboot EDL (9008)"));
+                  tabLayout.addTab(tabLayout.newTab().setText("Bypass FRP Command"));
 
-                  statusIndicator.setText("STATUS USB: Initializing USB Host Driver...");
+                  statusIndicator.setText("STATUS: ADB Bridge Engine Ready");
                   progressBar.setProgress(0);
 
                   tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                       @Override
                       public void onTabSelected(TabLayout.Tab tab) {
                           int pos = tab.getPosition();
-                          if (pos == 1) {
-                              // Scan Hardware USB OTG Beneran
-                              scanUsbHardware(statusIndicator, consoleOutput);
-                          } else if (pos == 0) {
-                              statusIndicator.setText("MODE ACTIVE [PANDUAN & ALAT]: Petunjuk Penggunaan");
-                              consoleOutput.setText("[PANDUAN KONEKSI HARDWARE USB]:\n" +
-                                      "1. Colokkan OTG + Adapter CH341A / CP2102 / Kabel Data ke HP Master.\n" +
-                                      "2. Pilih Tab 'Scan Hardware USB' untuk tes deteksi Chipset asli.\n" +
-                                      "3. Driver usb-serial-for-android v3.8.0 Aktif.");
-                          } else {
-                              statusIndicator.setText("MODE ACTIVE [" + tab.getText() + "]: Driver Ready");
-                              consoleOutput.setText("[SYSTEM LOG]: Mode " + tab.getText() + " Siap Mengirim Data Biner.");
+                          if (pos == 0) {
+                              statusIndicator.setText("MODE ACTIVE [PANDUAN ADB]:");
+                              consoleOutput.setText("[PANDUAN PENGGUNAAN ADB BRIDGE]:\n" +
+                                      "1. Hubungkan HP Target ke HP Master via kabel OTG.\n" +
+                                      "2. Pastikan USB Debugging aktif di HP Target.\n" +
+                                      "3. Pilih menu tab di atas untuk eksekusi perintah secara instan.");
+                          } else if (pos == 1) {
+                              statusIndicator.setText("STATUS: Menjalankan Perintah 'adb devices'...");
+                              executeShellCommand("adb devices", statusIndicator, consoleOutput);
+                          } else if (pos == 2) {
+                              statusIndicator.setText("STATUS: Menjalankan Perintah 'fastboot devices'...");
+                              executeShellCommand("fastboot devices", statusIndicator, consoleOutput);
+                          } else if (pos == 3) {
+                              statusIndicator.setText("STATUS: Mengirim Perintah Reboot EDL...");
+                              executeShellCommand("adb reboot edl", statusIndicator, consoleOutput);
+                          } else if (pos == 4) {
+                              statusIndicator.setText("STATUS: Menjalankan Perintah Bypass FRP...");
+                              executeShellCommand("adb shell am start -S -n com.google.android.gsf/.login.LoginActivity", statusIndicator, consoleOutput);
                           }
                       }
                       @Override
                       public void onTabUnselected(TabLayout.Tab tab) {}
                       @Override
                       public void onTabReselected(TabLayout.Tab tab) {
-                          if (tab.getPosition() == 1) {
-                              scanUsbHardware(statusIndicator, consoleOutput);
-                          }
+                          int pos = tab.getPosition();
+                          if (pos == 1) executeShellCommand("adb devices", statusIndicator, consoleOutput);
+                          if (pos == 2) executeShellCommand("fastboot devices", statusIndicator, consoleOutput);
+                          if (pos == 3) executeShellCommand("adb reboot edl", statusIndicator, consoleOutput);
                       }
                   });
               }
 
-              private void scanUsbHardware(TextView status, TextView log) {
-                  List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager);
-                  if (availableDrivers.isEmpty()) {
-                      status.setText("STATUS USB: Tidak ada Hardware USB Serial / CH341A terdeteksi.");
-                      log.setText("[SCAN HARDWARE USB]: Tidak ada perangkat USB Host terhubung.\n\n" +
-                              "Silakan colokkan adapter USB (CH341A, CP2102, FT232H, atau HP Target EDL/ADB) melalui kabel OTG ke HP ini.");
-                  } else {
-                      UsbSerialDriver driver = availableDrivers.get(0);
-                      UsbDevice device = driver.getDevice();
-                      status.setText("HARDWARE TERDETEKSI: " + device.getProductName() + " [VID:" + String.format("%04X", device.getVendorId()) + "]");
-                      log.setText("[HARDWARE DETECTED SUCCESS!]\n" +
-                              "• Device Name: " + device.getDeviceName() + "\n" +
-                              "• Product Name: " + device.getProductName() + "\n" +
-                              "• Vendor ID: 0x" + String.format("%04X", device.getVendorId()) + "\n" +
-                              "• Product ID: 0x" + String.format("%04X", device.getProductId()) + "\n" +
-                              "• Driver Class: " + driver.getClass().getSimpleName() + "\n\n" +
-                              "[STATUS]: Port Serial Hardware Siap Diumpan Data Biner!");
-                  }
+              private void executeShellCommand(String command, TextView status, TextView log) {
+                  new Thread(() -> {
+                      StringBuilder output = new StringBuilder();
+                      try {
+                          Process process = Runtime.getRuntime().exec(command);
+                          BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                          BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                          String line;
+                          while ((line = reader.readLine()) != null) {
+                              output.append(line).append("\n");
+                          }
+                          while ((line = errorReader.readLine()) != null) {
+                              output.append("ERR: ").append(line).append("\n");
+                          }
+                          process.waitFor();
+                          
+                          final String result = output.toString();
+                          runOnUiThread(() -> {
+                              status.setText("STATUS: Eksekusi Perintah Selesai");
+                              log.setText("$ " + command + "\n\n" + (result.isEmpty() ? "[INFO]: Perintah dijalankan, tidak ada output teks kembali." : result));
+                          });
+                      } catch (Exception e) {
+                          final String errorMsg = e.getMessage();
+                          runOnUiThread(() -> {
+                              status.setText("STATUS: Gagal Menjalankan Perintah");
+                              log.setText("$ " + command + "\n\n[ERROR]: " + errorMsg + "\n\nPastikan binary adb/fastboot tersedia atau gunakan otg-host mode.");
+                          });
+                      }
+                  }).start();
               }
           }
           JAVA
 
-          # 9. activity_main.xml Layout
+          # 8. activity_main.xml Layout
           cat << 'XML' > app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -272,7 +257,7 @@ jobs:
               <TextView
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="UNIVERSAL OTG HARDWARE TOOLKIT v7.0"
+                  android:text="UNIVERSAL ADB &amp; OTG BRIDGE v8.0"
                   android:textColor="@color/primary_accent"
                   android:textSize="15sp"
                   android:textStyle="bold"
@@ -321,7 +306,7 @@ jobs:
                       android:textColor="#00FF00"
                       android:fontFamily="monospace"
                       android:textSize="12sp"
-                      android:text="[USB HARDWARE ENGINE INITIALIZED]:\nDriver Native usb-serial-for-android Siap Membaca Chipset Hardware CH341A / FT232H / CP2102 / CH340 / PL2303." />
+                      android:text="[ADB BRIDGE ENGINE INITIALIZED]:\nSiap menghubungkan perintah ADB/Fastboot melalui kabel OTG." />
               </ScrollView>
 
           </LinearLayout>
@@ -334,5 +319,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Universal-OTG-RealDriver-v7
+          name: Universal-ADB-Bridge-v8
           path: app/build/outputs/apk/debug/app-debug.apk
