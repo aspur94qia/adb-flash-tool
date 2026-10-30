@@ -19,14 +19,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create Complete Project Files & Setup Fixed Gradle 8.5
+      - name: Create Complete Project Files & Download Complete Gradle Wrapper 8.5
         run: |
           mkdir -p app/src/main/java/com/universal/otgflasher
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
           mkdir -p gradle/wrapper
 
-          # 1. Setup Manual Gradle 8.5 Wrapper Properties (Mencegah Gradle 9.x dipanggil)
+          # 1. Setup Gradle 8.5 Wrapper Properties
           cat << 'PROPS' > gradle/wrapper/gradle-wrapper.properties
           distributionBase=GRADLE_USER_HOME
           distributionPath=wrapper/dists
@@ -37,9 +37,10 @@ jobs:
           zipStorePath=wrapper/dists
           PROPS
 
-          # 2. Download gradlew stub
+          # 2. Download gradlew stub DAN gradle-wrapper.jar yang valid
           curl -sSL -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradlew
           chmod +x gradlew
+          curl -sSL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradle/wrapper/gradle-wrapper.jar
 
           # 3. settings.gradle
           echo "rootProject.name = 'Universal-OTG-Toolkit'" > settings.gradle
